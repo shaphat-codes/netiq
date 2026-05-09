@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NetIQ — Decision log</title>
+  <style>
+    :root { --bg: #0f1419; --card: #1a2332; --text: #e7ecf3; --muted: #8b9bb4; --accent: #3d8bfd; --risk: #f59e0b; --ok: #34d399; }
+    * { box-sizing: border-box; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 1.5rem; line-height: 1.5; }
+    h1 { font-size: 1.35rem; font-weight: 600; margin: 0 0 0.25rem; }
+    p.sub { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9rem; }
+    nav a { color: var(--accent); text-decoration: none; margin-right: 1rem; }
+    nav a:hover { text-decoration: underline; }
+    .toolbar { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    button { background: var(--accent); color: #fff; border: none; padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
+    button:hover { filter: brightness(1.08); }
+    .events { display: flex; flex-direction: column; gap: 0.65rem; }
+    .card { background: var(--card); border-radius: 10px; padding: 1rem 1.1rem; border: 1px solid rgba(255,255,255,.06); }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; align-items: baseline; font-size: 0.88rem; }
+    .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+    .dec-ALLOW { background: rgba(52,211,153,.2); color: var(--ok); }
+    .dec-BLOCK { background: rgba(248,113,113,.2); color: #f87171; }
+    .dec-OTP { background: rgba(245,158,11,.2); color: var(--risk); }
+    .dec-PRIORITIZE { background: rgba(61,139,253,.25); color: var(--accent); }
+    .meta { color: var(--muted); font-size: 0.8rem; }
+    .apis { font-family: ui-monospace, monospace; font-size: 0.78rem; color: #a5b4fc; }
+    .err { color: #f87171; font-size: 0.78rem; }
+    .empty { color: var(--muted); padding: 2rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/simulator">Simulator</a>
+    <a href="/health">Health</a>
+  </nav>
+  <h1>NetIQ decision log</h1>
+  <p class="sub">Live tail of <code>/analyze</code> — Nokia Network as Code signals, policy version, and latency.</p>
+  <div class="toolbar">
+    <button type="button" id="refresh">Refresh now</button>
+    <span class="meta" id="status">Loading…</span>
+  </div>
+  <div class="events" id="events"></div>
+
+  <script>
+    const eventsEl = document.getElementById("events");
+    const statusEl = document.getElementById("status");
+
+    function badgeClass(d) {
+      return "badge dec-" + (d || "ALLOW");
+    }
+
+    function render(events) {
+      if (!events.length) {
+        eventsEl.innerHTML = '<div class="empty">No events yet. Run the simulator or POST to <code>/analyze</code>.</div>';
+        return;
+      }
+      eventsEl.innerHTML = events.map((e) => {
+        const errs = (e.api_errors && e.api_errors.length)
+          ? `<div class="err">${e.api_errors.map(x => "⚠ " + x).join("<br/>")}</div>` : "";
+        return `<div class="card">
+          <div class="row">
+            <span class="${badgeClass(e.decision)}">${e.decision}</span>
+            <span>intent <strong>${e.intent}</strong></span>
+            <span>risk <strong>${Number(e.risk_score).toFixed(1)}</strong></span>
+            <span>conf <strong>${Number(e.confidence).toFixed(2)}</strong></span>
+            <span class="meta">${e.duration_ms != null ? e.duration_ms.toFixed(1) + " ms" : ""}</span>
+          </div>
+          <p style="margin:0.5rem 0 0.35rem;font-size:0.88rem">${e.reason || ""}</p>
+          <div class="apis">APIs: ${(e.apis_called || []).join(", ") || "—"}</div>
+          <div class="meta" style="margin-top:0.35rem">${e.phone} · ${e.created_at} · policy ${e.policy_version}</div>
+          ${errs}
+        </div>`;
+      }).join("");
+    }
+
+    async function load() {
+      statusEl.textContent = "Loading…";
+      try {
+        const r = await fetch("/api/events?limit=40");
+        const data = await r.json();
+        render(data.events || []);
+        statusEl.textContent = "Updated " + new Date().toLocaleTimeString();
+      } catch (e) {
+        statusEl.textContent = "Error: " + e;
+      }
+    }
+
+    document.getElementById("refresh").addEventListener("click", load);
+    load();
+    setInterval(load, 8000);
+  </script>
+</body>
+</html>

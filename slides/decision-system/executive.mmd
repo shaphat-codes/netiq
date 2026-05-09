@@ -1,0 +1,14 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Inter, system-ui, -apple-system, Segoe UI, sans-serif","primaryColor":"#22c55e","primaryTextColor":"#0b1f12","primaryBorderColor":"#15803d","lineColor":"#475569","secondaryColor":"#e2e8f0","tertiaryColor":"#f1f5f9","fontSize":"18px"}}}%%
+flowchart LR
+    In["Request<br/>intent · phone · context"]
+    Mem[("Cross-sector<br/>memory")]
+    Brain["Decision brain<br/>LLM agent or policy rules"]
+    Camara["Nokia CAMARA APIs<br/>17 network signals"]
+    Out["Decision<br/>ALLOW · VERIFY · BLOCK<br/>+ confidence + reason"]
+
+    In --> Brain
+    Mem --> Brain
+    Brain --> Camara
+    Camara --> Brain
+    Brain --> Out
+    Out -.->|learn| Mem

@@ -1,0 +1,105 @@
+{
+  "scenarios": [
+    {
+      "id": "payment_small",
+      "label": "Payment — small P2P",
+      "description": "NaC simulator: +999… MSISDNs. SIM swap only when no consent/location.",
+      "payload": {
+        "intent": "payment",
+        "phone": "+9999999100",
+        "amount": 25.0
+      }
+    },
+    {
+      "id": "payment_consent",
+      "label": "Payment — with consent reference",
+      "description": "Calls Consent Info first, then SIM swap (+ payment ladder).",
+      "payload": {
+        "intent": "payment",
+        "phone": "+9999999110",
+        "amount": 80.0,
+        "consent_reference": "demo-consent-netiq-001"
+      }
+    },
+    {
+      "id": "payment_high",
+      "label": "Payment — high value",
+      "description": "Ladder: SIM swap, verify, device, device swap, recycling (up to 5 NaC calls).",
+      "payload": {
+        "intent": "payment",
+        "phone": "+9999999103",
+        "amount": 12000.0,
+        "amount_band": "high"
+      }
+    },
+    {
+      "id": "payment_location",
+      "label": "Payment — location verification",
+      "description": "NaC Location Verification (circle) at Accra + SIM swap ladder.",
+      "payload": {
+        "intent": "payment",
+        "phone": "+9999999104",
+        "amount": 500.0,
+        "location": { "lat": 5.6037, "lng": -0.187 },
+        "verification_radius_m": 2500
+      }
+    },
+    {
+      "id": "onboarding_clean",
+      "label": "Onboarding — standard",
+      "description": "SIM swap, device swap, recycling, device status",
+      "payload": {
+        "intent": "onboarding",
+        "phone": "+9999999105"
+      }
+    },
+    {
+      "id": "onboarding_kyc",
+      "label": "Onboarding — with claimed identity",
+      "description": "Adds number verification; use simulator MSISDN",
+      "payload": {
+        "intent": "onboarding",
+        "phone": "+9999999106",
+        "claimed_identity": { "name": "Ama Mensah", "dob": "1995-04-12" }
+      }
+    },
+    {
+      "id": "emergency",
+      "label": "Emergency",
+      "description": "Location + QoS + congestion insights",
+      "payload": {
+        "intent": "emergency",
+        "phone": "+9999999107"
+      }
+    },
+    {
+      "id": "mobility",
+      "label": "Mobility",
+      "description": "QoS + device + congestion + reachability",
+      "payload": {
+        "intent": "mobility",
+        "phone": "+9999999108"
+      }
+    },
+    {
+      "id": "mobility_geo",
+      "label": "Mobility — with reference location",
+      "description": "Fetches network location (vs geofence subscription if you pass geofence_subscription_id)",
+      "payload": {
+        "intent": "mobility",
+        "phone": "+9999999109",
+        "location": { "lat": 5.56, "lng": -0.205 }
+      }
+    },
+    {
+      "id": "mobility_geofence",
+      "label": "Mobility — geofence subscription",
+      "description": "Replace reachability/location with Geofencing GET (use a real subscription id from NaC console when available).",
+      "payload": {
+        "intent": "mobility",
+        "phone": "+9999999111",
+        "geofence_subscription_id": "replace-with-your-subscription-id"
+      }
+    }
+  ]
+}

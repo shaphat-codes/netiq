@@ -1,0 +1,147 @@
+{
+  "scenarios": [
+    {
+      "id": "fraud_payment",
+      "label": "Fraud — P2P payment",
+      "description": "LLM agent checks SIM swap, device swap, call forwarding, and roaming to assess fraud risk on a mobile money transfer.",
+      "mode": "agent",
+      "payload": {
+        "intent": "fraud_prevention",
+        "phone": "+9999999100",
+        "context": { "amount": 200, "channel": "p2p_wallet" }
+      }
+    },
+    {
+      "id": "fraud_high",
+      "label": "Fraud — high-value transfer",
+      "description": "High-value transfer triggers deeper LLM reasoning. Expect VERIFY or BLOCK if multiple risk signals fire.",
+      "mode": "agent",
+      "payload": {
+        "intent": "fraud_prevention",
+        "phone": "+9999999103",
+        "context": { "amount": 12000, "channel": "wire_transfer" }
+      }
+    },
+    {
+      "id": "onboarding_agent",
+      "label": "Onboarding — new user registration",
+      "description": "LLM agent verifies number legitimacy, checks for recycled numbers, and runs KYC match before allowing registration.",
+      "mode": "agent",
+      "payload": {
+        "intent": "onboarding",
+        "phone": "+9999999105",
+        "context": { "name": "Kwame Mensah" }
+      }
+    },
+    {
+      "id": "onboarding_policy",
+      "label": "Onboarding — policy mode",
+      "description": "Same onboarding signals but decision deferred to your tenant rules. Compare against agent outcome.",
+      "mode": "policy",
+      "payload": {
+        "intent": "onboarding",
+        "phone": "+9999999105",
+        "context": { "name": "Kwame Mensah" }
+      }
+    },
+    {
+      "id": "emergency_response",
+      "label": "Emergency dispatch",
+      "description": "LLM checks reachability, QoS, and congestion. Safety-first — never blocks; prioritizes on weak network.",
+      "mode": "agent",
+      "payload": {
+        "intent": "emergency_response",
+        "phone": "+9999999107",
+        "context": { "channel": "ambulance_dispatch" }
+      }
+    },
+    {
+      "id": "mobility",
+      "label": "Mobility — ride-hailing",
+      "description": "LLM evaluates QoS, location, reachability, and roaming to approve or degrade a ride-hailing session.",
+      "mode": "agent",
+      "payload": {
+        "intent": "mobility",
+        "phone": "+9999999108",
+        "context": { "channel": "ride_app" }
+      }
+    },
+    {
+      "id": "health",
+      "label": "Telehealth session",
+      "description": "LLM checks network quality and subscriber identity before authorising a remote video consultation.",
+      "mode": "agent",
+      "payload": {
+        "intent": "health",
+        "phone": "+9999999109",
+        "context": { "channel": "video_consult", "min_age": 18 }
+      }
+    },
+    {
+      "id": "agri",
+      "label": "Agri field sensor",
+      "description": "LLM validates connectivity and basic identity for an IoT soil sensor ping.",
+      "mode": "agent",
+      "payload": {
+        "intent": "agri",
+        "phone": "+9999999111",
+        "context": { "channel": "soil_sensor" }
+      }
+    },
+    {
+      "id": "finance",
+      "label": "Finance — loan application",
+      "description": "LLM runs KYC match, tenure, SIM swap, call forwarding, and number recycling before approving a loan request.",
+      "mode": "agent",
+      "payload": {
+        "intent": "finance",
+        "phone": "+9999999120",
+        "context": { "amount": 5000, "product": "personal_loan", "name": "Ama Owusu" }
+      }
+    },
+    {
+      "id": "insurance",
+      "label": "Insurance — policy application",
+      "description": "LLM verifies KYC, age, and location consistency before binding an insurance policy.",
+      "mode": "agent",
+      "payload": {
+        "intent": "insurance",
+        "phone": "+9999999121",
+        "context": { "product": "health_insurance", "name": "Kofi Boateng", "min_age": 21 }
+      }
+    },
+    {
+      "id": "ecommerce",
+      "label": "E-commerce — checkout fraud",
+      "description": "LLM checks SIM swap, device swap, and number recycling to screen a high-risk e-commerce checkout.",
+      "mode": "agent",
+      "payload": {
+        "intent": "ecommerce",
+        "phone": "+9999999122",
+        "context": { "amount": 350, "channel": "mobile_checkout" }
+      }
+    },
+    {
+      "id": "logistics",
+      "label": "Logistics — delivery tracking",
+      "description": "LLM verifies location, QoS, and reachability to approve a last-mile delivery confirmation.",
+      "mode": "agent",
+      "payload": {
+        "intent": "logistics",
+        "phone": "+9999999123",
+        "context": { "channel": "delivery_confirmation", "lat": 5.6037, "lng": -0.187 }
+      }
+    },
+    {
+      "id": "education",
+      "label": "Education — student verification",
+      "description": "LLM runs number verification, KYC match, and tenure to confirm a student's identity before exam access.",
+      "mode": "agent",
+      "payload": {
+        "intent": "education",
+        "phone": "+9999999124",
+        "context": { "channel": "exam_portal", "name": "Abena Asante" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NetIQ — Scenario simulator</title>
+  <style>
+    :root { --bg: #0f1419; --card: #1a2332; --text: #e7ecf3; --muted: #8b9bb4; --accent: #3d8bfd; }
+    * { box-sizing: border-box; }
+    body { font-family: ui-sans-serif, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 1.5rem; line-height: 1.5; }
+    h1 { font-size: 1.35rem; margin: 0 0 0.25rem; }
+    p.sub { color: var(--muted); margin: 0 0 1rem; font-size: 0.9rem; }
+    nav a { color: var(--accent); text-decoration: none; margin-right: 1rem; }
+    .grid { display: grid; gap: 0.65rem; max-width: 520px; }
+    button { text-align: left; background: var(--card); color: var(--text); border: 1px solid rgba(255,255,255,.1); padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; }
+    button:hover { border-color: var(--accent); }
+    button small { display: block; color: var(--muted); margin-top: 0.25rem; font-size: 0.8rem; }
+    pre { background: #111820; padding: 1rem; border-radius: 8px; overflow: auto; font-size: 0.8rem; border: 1px solid rgba(255,255,255,.08); max-width: 900px; }
+    .explain { margin-top: 1rem; }
+    .explain button { display: inline-block; margin-top: 0.5rem; background: var(--accent); color: #fff; border: none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/simulator">Simulator</a>
+  </nav>
+  <h1>Scenario simulator</h1>
+  <p class="sub">Runs the same <code>/analyze</code> endpoint as production. Optional copilot narrative via <code>/explain</code>.</p>
+  <div class="grid" id="scenarios"></div>
+  <h2 style="margin-top:1.5rem;font-size:1rem">Last response</h2>
+  <pre id="out">—</pre>
+  <div class="explain">
+    <button type="button" id="explainBtn" disabled>Generate explanation</button>
+    <pre id="explainOut" style="margin-top:0.75rem;display:none"></pre>
+  </div>
+
+  <script>
+    let lastPayload = null;
+    const out = document.getElementById("out");
+    const grid = document.getElementById("scenarios");
+    const explainBtn = document.getElementById("explainBtn");
+    const explainOut = document.getElementById("explainOut");
+
+    async function init() {
+      const r = await fetch("/scenarios.json");
+      const data = await r.json();
+      (data.scenarios || []).forEach((s) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = "<strong>" + s.label + "</strong><small>" + (s.description || "") + "</small>";
+        b.addEventListener("click", () => run(s.payload));
+        grid.appendChild(b);
+      });
+    }
+
+    async function run(payload) {
+      out.textContent = "Running…";
+      explainOut.style.display = "none";
+      explainBtn.disabled = true;
+      try {
+        const r = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const j = await r.json();
+        lastPayload = j;
+        out.textContent = JSON.stringify(j, null, 2);
+        explainBtn.disabled = !j.decision;
+      } catch (e) {
+        out.textContent = String(e);
+      }
+    }
+
+    explainBtn.addEventListener("click", async () => {
+      if (!lastPayload) return;
+      explainOut.style.display = "block";
+      explainOut.textContent = "…";
+      try {
+        const r = await fetch("/explain", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(lastPayload),
+        });
+        const j = await r.json();
+        explainOut.textContent = (j.narrative || JSON.stringify(j)) + (j.source ? "\n\n— source: " + j.source : "");
+      } catch (e) {
+        explainOut.textContent = String(e);
+      }
+    });
+
+    init().catch((e) => { grid.innerHTML = "<p style=color:#f88>" + e + "</p>"; });
+  </script>
+</body>
+</html>

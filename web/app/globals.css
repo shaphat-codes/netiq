@@ -1,0 +1,354 @@
+@import "tailwindcss";
+
+/* -------------------------------------------------------------
+ * Theme variants — Notion-inspired neutral palette.
+ *
+ * - Single accent: text/foreground color (near-black in light,
+ *   near-white in dark) used for primary CTAs.
+ * - Surfaces: layered warm grays.
+ * - Status: error red is the only chromatic color.
+ *
+ * next-themes adds class="dark" or class="light" on <html>.
+ * The `:root` block is the dark fallback for SSR (no class yet).
+ * ------------------------------------------------------------- */
+
+:root,
+:root.dark {
+  color-scheme: dark;
+
+  --background: #1a1a1a;
+  --foreground: #ededed;
+  --card: #202020;
+  --muted: #9b9a98;
+  --accent: #ededed;
+
+  --backdrop: rgba(0, 0, 0, 0.55);
+
+  /* Semantic tokens (Tailwind-mapped via @theme inline below) */
+  --color-background: #1a1a1a;
+  --color-foreground: #ededed;
+
+  --color-surface: #1a1a1a;
+  --color-surface-dim: #161616;
+  --color-surface-bright: #262626;
+  --color-surface-container-lowest: #141414;
+  --color-surface-container-low: #1d1d1d;
+  --color-surface-container: #202020;
+  --color-surface-container-high: #252525;
+  --color-surface-container-highest: #2c2c2c;
+  --color-surface-variant: #2c2c2c;
+
+  --color-on-background: #ededed;
+  --color-on-surface: #ededed;
+  --color-on-surface-variant: #9b9a98;
+
+  --color-outline: #4a4a4a;
+  --color-outline-variant: #2e2e2e;
+
+  /* "Primary" = the dominant foreground/CTA tone (near-white in dark) */
+  --color-primary: #ededed;
+  --color-on-primary: #1a1a1a;
+  --color-primary-container: #ededed;
+  --color-on-primary-container: #1a1a1a;
+  --color-primary-fixed: #ededed;
+  --color-primary-fixed-dim: #c8c8c8;
+  --color-on-primary-fixed: #1a1a1a;
+  --color-on-primary-fixed-variant: #2c2c2c;
+  --color-inverse-primary: #1a1a1a;
+  --color-surface-tint: #ededed;
+
+  /* "Secondary" tier kept neutral so any leftover utilities still look right */
+  --color-secondary: #b8b6b3;
+  --color-on-secondary: #1a1a1a;
+  --color-secondary-container: #2c2c2c;
+  --color-on-secondary-container: #ededed;
+  --color-secondary-fixed: #d8d6d3;
+  --color-secondary-fixed-dim: #b8b6b3;
+  --color-on-secondary-fixed: #1a1a1a;
+  --color-on-secondary-fixed-variant: #4a4a4a;
+
+  /* "Tertiary" tier reused as a soft warning (warm gray) — no longer amber */
+  --color-tertiary: #d8d6d3;
+  --color-on-tertiary: #1a1a1a;
+  --color-tertiary-container: #2c2c2c;
+  --color-on-tertiary-container: #ededed;
+  --color-tertiary-fixed: #d8d6d3;
+  --color-tertiary-fixed-dim: #b8b6b3;
+  --color-on-tertiary-fixed: #1a1a1a;
+  --color-on-tertiary-fixed-variant: #4a4a4a;
+
+  /* Status colors — used sparingly, only for semantic states */
+  --color-error: #ef6e6e;
+  --color-on-error: #ffffff;
+  --color-error-container: #4a1d1d;
+  --color-on-error-container: #fdd9d6;
+
+  --color-success: #5fcf90;
+  --color-on-success: #0f1f15;
+  --color-success-container: #1d3d2a;
+  --color-on-success-container: #c0eed3;
+
+  --color-warning: #e8b964;
+  --color-on-warning: #2b1d05;
+  --color-warning-container: #3d2a10;
+  --color-on-warning-container: #fde7c4;
+
+  --color-inverse-surface: #ededed;
+  --color-inverse-on-surface: #1a1a1a;
+}
+
+:root.light {
+  color-scheme: light;
+
+  --background: #fafaf9;
+  --foreground: #191717;
+  --card: #ffffff;
+  --muted: #6b6b6b;
+  --accent: #191717;
+
+  --backdrop: rgba(15, 15, 15, 0.32);
+
+  --color-background: #fafaf9;
+  --color-foreground: #191717;
+
+  --color-surface: #fafaf9;
+  --color-surface-dim: #f1f0ee;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f5f4f2;
+  --color-surface-container: #f1f0ee;
+  --color-surface-container-high: #ebeae7;
+  --color-surface-container-highest: #e5e4e0;
+  --color-surface-variant: #ebeae7;
+
+  --color-on-background: #191717;
+  --color-on-surface: #191717;
+  --color-on-surface-variant: #6b6b6b;
+
+  --color-outline: #b9b8b3;
+  --color-outline-variant: #e0dedb;
+
+  /* Primary in light mode = near-black (Notion CTA) */
+  --color-primary: #191717;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #191717;
+  --color-on-primary-container: #ffffff;
+  --color-primary-fixed: #191717;
+  --color-primary-fixed-dim: #4a4a4a;
+  --color-on-primary-fixed: #ffffff;
+  --color-on-primary-fixed-variant: #ebeae7;
+  --color-inverse-primary: #ededed;
+  --color-surface-tint: #191717;
+
+  --color-secondary: #4a4a4a;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ebeae7;
+  --color-on-secondary-container: #191717;
+  --color-secondary-fixed: #ebeae7;
+  --color-secondary-fixed-dim: #b9b8b3;
+  --color-on-secondary-fixed: #191717;
+  --color-on-secondary-fixed-variant: #6b6b6b;
+
+  --color-tertiary: #6b6b6b;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ebeae7;
+  --color-on-tertiary-container: #191717;
+  --color-tertiary-fixed: #ebeae7;
+  --color-tertiary-fixed-dim: #b9b8b3;
+  --color-on-tertiary-fixed: #191717;
+  --color-on-tertiary-fixed-variant: #6b6b6b;
+
+  --color-error: #c93a3a;
+  --color-on-error: #ffffff;
+  --color-error-container: #fdd9d6;
+  --color-on-error-container: #441111;
+
+  --color-success: #1d7a4d;
+  --color-on-success: #ffffff;
+  --color-success-container: #dff5e7;
+  --color-on-success-container: #0d3a23;
+
+  --color-warning: #a05a00;
+  --color-on-warning: #ffffff;
+  --color-warning-container: #fde7c4;
+  --color-on-warning-container: #3d2200;
+
+  --color-inverse-surface: #191717;
+  --color-inverse-on-surface: #fafaf9;
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
+
+  --color-surface: var(--color-surface);
+  --color-surface-dim: var(--color-surface-dim);
+  --color-surface-bright: var(--color-surface-bright);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  --color-surface-variant: var(--color-surface-variant);
+
+  --color-on-background: var(--color-on-background);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+
+  --color-primary: var(--color-primary);
+  --color-on-primary: var(--color-on-primary);
+  --color-primary-container: var(--color-primary-container);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-surface-tint: var(--color-surface-tint);
+
+  --color-secondary: var(--color-secondary);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+
+  --color-tertiary: var(--color-tertiary);
+  --color-on-tertiary: var(--color-on-tertiary);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+
+  --color-error: var(--color-error);
+  --color-on-error: var(--color-on-error);
+  --color-error-container: var(--color-error-container);
+  --color-on-error-container: var(--color-on-error-container);
+
+  --color-success: var(--color-success);
+  --color-on-success: var(--color-on-success);
+  --color-success-container: var(--color-success-container);
+  --color-on-success-container: var(--color-on-success-container);
+
+  --color-warning: var(--color-warning);
+  --color-on-warning: var(--color-on-warning);
+  --color-warning-container: var(--color-warning-container);
+  --color-on-warning-container: var(--color-on-warning-container);
+
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-family-headline: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-family-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-family-label: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  vertical-align: middle;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Legacy classes kept as flat fallbacks so old markup we haven't touched
+ * yet still renders cleanly without gradients or glass effects. */
+.glass-panel {
+  background: var(--color-surface-container);
+}
+
+.primary-gradient-btn,
+.precision-gradient {
+  background: var(--color-primary);
+}
+
+/* Streaming trace step entrance animation. */
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fade-slide-in 0.25s ease-out forwards;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 1.4s ease-in-out infinite;
+}
+
+/* -------------------------------------------------------------
+ * Demo sector accents.
+ *
+ * Each /demo/<sector> page sets `data-demo-sector` on its layout root
+ * and reads --demo-accent / --demo-accent-soft for hero highlights and
+ * decorative pills. Kept deliberately understated so the four apps still
+ * read as one product family.
+ * ------------------------------------------------------------- */
+[data-demo-sector] {
+  --demo-accent: var(--color-primary);
+  --demo-accent-soft: var(--color-surface-container-high);
+}
+[data-demo-sector="fintech"] {
+  --demo-accent: #2f7f5a;
+  --demo-accent-soft: rgba(47, 127, 90, 0.12);
+}
+[data-demo-sector="logistics"] {
+  --demo-accent: #2f6dbf;
+  --demo-accent-soft: rgba(47, 109, 191, 0.12);
+}
+[data-demo-sector="health"] {
+  --demo-accent: #b34d6b;
+  --demo-accent-soft: rgba(179, 77, 107, 0.12);
+}
+[data-demo-sector="agri"] {
+  --demo-accent: #8a6b1f;
+  --demo-accent-soft: rgba(138, 107, 31, 0.14);
+}

@@ -1,0 +1,46 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Env & local secrets
+.env
+.env.local
+.env.*.local
+
+# App runtime / local data
+.netiq/
+netiq.db
+netiq.pid
+netiq.log
+*.log
+
+# Next.js / Node (when working from repo root)
+web/node_modules/
+web/.next/
+web/out/
+
+# Editors & OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# LibreOffice / Office lock files while editing
+.~lock.*
+
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
