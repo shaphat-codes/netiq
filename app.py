@@ -32,13 +32,23 @@ def create_app() -> Flask:
     app.config.from_object(cfg)
     app.secret_key = cfg.SECRET_KEY
     app.config["SESSION_COOKIE_HTTPONLY"] = True
-    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    if cfg.SESSION_CROSS_SITE:
+        app.config["SESSION_COOKIE_SAMESITE"] = "None"
+        app.config["SESSION_COOKIE_SECURE"] = True
+    else:
+        app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+        app.config["SESSION_COOKIE_SECURE"] = False
     app.config["PERMANENT_SESSION_LIFETIME"] = 86400 * 7
 
     if not cfg.RAPIDAPI_KEY:
         logger.warning("RAPIDAPI_KEY is empty — NaC calls will fail until it is set in the environment")
 
     init_db()
+
+    @app.before_request
+    def cors_preflight():
+        if request.method == "OPTIONS":
+            return "", 204
 
     @app.after_request
     def cors_headers(response):

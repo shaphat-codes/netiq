@@ -36,6 +36,11 @@ class AppConfig:
     OPENAI_API_KEY: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", "").strip())
     OPENAI_MODEL: str = field(default_factory=lambda: os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
 
+    # Shared demo portal user (demo@netiq.local) — disable for strict auth-only deployments.
+    DEMO_OPEN_LOGIN: bool = field(default_factory=lambda: os.getenv("DEMO_OPEN_LOGIN", "true").lower() == "true")
+    # When true: session cookie SameSite=None; Secure — needed for UI on another origin (e.g. Vercel + Render).
+    SESSION_CROSS_SITE: bool = field(default_factory=lambda: os.getenv("SESSION_CROSS_SITE", "false").lower() == "true")
+
     # Portal / API security
     SECRET_KEY: str = field(default_factory=lambda: os.getenv("SECRET_KEY", "dev-only-change-me-in-production").strip())
     REQUIRE_API_KEY: bool = field(default_factory=lambda: os.getenv("REQUIRE_API_KEY", "false").lower() == "true")

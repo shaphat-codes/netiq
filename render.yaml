@@ -17,6 +17,11 @@ services:
         value: /opt/netiq/data/netiq.db
       - key: LOG_LEVEL
         value: INFO
+      # Browser UI on Vercel must send session cookies cross-origin:
+      - key: SESSION_CROSS_SITE
+        value: "true"
+      - key: DEMO_OPEN_LOGIN
+        value: "true"
       - key: RAPIDAPI_KEY
         sync: false
       - key: SECRET_KEY

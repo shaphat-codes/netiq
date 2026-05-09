@@ -2,13 +2,17 @@ import hashlib
 import json
 import logging
 import os
+import secrets
 import sqlite3
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+from werkzeug.security import generate_password_hash
+
 from database.migrate import run_migrations
 
 _DB_DEFAULT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "netiq.db")
+DEMO_PORTAL_EMAIL = "demo@netiq.local"
 DB_PATH = os.getenv("NETIQ_DB_PATH", _DB_DEFAULT)
 logger = logging.getLogger(__name__)
 
@@ -177,6 +181,16 @@ def list_analyze_events(
 
 
 # --- Accounts & portal users ---
+
+
+def ensure_demo_portal_user() -> int:
+    """Return user id for the shared demo account; create account + user if missing."""
+    existing = get_user_by_email(DEMO_PORTAL_EMAIL)
+    if existing:
+        return int(existing["id"])
+    aid = create_account("Demo workspace")
+    ph = generate_password_hash(secrets.token_hex(32))
+    return create_portal_user(aid, DEMO_PORTAL_EMAIL, ph)
 
 
 def create_account(name: str = "Workspace") -> int:

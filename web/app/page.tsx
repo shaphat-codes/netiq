@@ -71,18 +71,12 @@ export default function Home() {
               <span className="material-symbols-outlined text-[16px] leading-none">apps</span>
               Demos
             </Link>
-            <Link
-              href="/login"
-              className="text-on-surface-variant hover:text-on-surface hidden text-sm transition-colors sm:block"
-            >
-              Sign in
-            </Link>
             <ThemeToggle />
             <Link
-              href="/register"
+              href="/login"
               className="bg-primary text-on-primary hover:opacity-90 inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-opacity"
             >
-              Get started
+              Sign in
               <span className="material-symbols-outlined text-[14px] leading-none">arrow_forward</span>
             </Link>
           </div>
@@ -108,10 +102,10 @@ export default function Home() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/register"
+              href="/login"
               className="bg-primary text-on-primary hover:opacity-90 inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-opacity"
             >
-              Create account
+              Sign in to console
               <span className="material-symbols-outlined text-[16px] leading-none">arrow_forward</span>
             </Link>
             <Link
@@ -127,12 +121,6 @@ export default function Home() {
             >
               <span className="material-symbols-outlined text-[16px] leading-none">apps</span>
               Explore sector demos
-            </Link>
-            <Link
-              href="/login"
-              className="text-on-surface-variant hover:text-on-surface px-2 py-2 text-sm font-medium transition-colors"
-            >
-              Sign in
             </Link>
           </div>
           <p className="text-on-surface-variant mt-3 text-xs">
@@ -263,10 +251,10 @@ const result = await decide({
               Free to try. No credit card required.
             </p>
             <Link
-              href="/register"
+              href="/login"
               className="bg-primary text-on-primary hover:opacity-90 mt-8 inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-opacity"
             >
-              Create account
+              Sign in to console
               <span className="material-symbols-outlined text-[16px] leading-none">arrow_forward</span>
             </Link>
           </div>
@@ -278,9 +266,6 @@ const result = await decide({
             <div className="flex gap-6">
               <Link href="/login" className="hover:text-on-surface transition-colors">
                 Sign in
-              </Link>
-              <Link href="/register" className="hover:text-on-surface transition-colors">
-                Get started
               </Link>
             </div>
           </div>

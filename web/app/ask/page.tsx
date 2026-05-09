@@ -29,15 +29,9 @@ export default function AskPage() {
             <ThemeToggle variant="outline" />
             <Link
               href="/login"
-              className="text-on-surface-variant hover:text-on-surface text-sm"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/register"
               className="bg-on-surface text-surface inline-flex h-8 items-center rounded-md px-3 text-sm font-medium"
             >
-              Sign up
+              Sign in
             </Link>
           </div>
         </div>

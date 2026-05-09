@@ -254,6 +254,13 @@ SPEC = {
                 },
             }
         },
+        "/api/v1/auth/demo": {
+            "post": {
+                "tags": ["Portal"],
+                "summary": "Demo login (shared workspace; requires DEMO_OPEN_LOGIN)",
+                "responses": {"200": {"description": "Session cookie set"}},
+            }
+        },
         "/api/v1/auth/register": {
             "post": {
                 "tags": ["Portal"],

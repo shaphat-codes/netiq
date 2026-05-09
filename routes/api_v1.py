@@ -15,6 +15,7 @@ from database.db import (
     create_policy,
     create_portal_user,
     delete_policy,
+    ensure_demo_portal_user,
     get_account,
     get_active_policy,
     get_user_by_email,
@@ -66,6 +67,26 @@ def register():
     session["user_id"] = uid
     session.permanent = True
     return jsonify({"user_id": uid, "account_id": aid, "email": email}), 201
+
+
+@api_v1_bp.post("/auth/demo")
+def demo_login():
+    """One-click shared demo session (no password). Toggle with DEMO_OPEN_LOGIN."""
+    if not CONFIG.DEMO_OPEN_LOGIN:
+        return jsonify({"errors": ["demo login is disabled"]}), 403
+    uid = ensure_demo_portal_user()
+    session["user_id"] = uid
+    session.permanent = True
+    user = get_user_by_id(uid)
+    acc = get_account(int(user["account_id"])) if user else None
+    return jsonify(
+        {
+            "user_id": uid,
+            "account_id": user["account_id"] if user else None,
+            "email": user["email"] if user else "",
+            "account_name": acc["name"] if acc else "",
+        }
+    )
 
 
 @api_v1_bp.post("/auth/login")

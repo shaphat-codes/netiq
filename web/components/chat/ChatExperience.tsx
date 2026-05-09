@@ -495,7 +495,7 @@ function BubbleFooter({
 
       {!authed ? (
         <Link
-          href="/register"
+          href="/login"
           className="hover:text-on-surface inline-flex w-fit items-center gap-1 text-[11px] underline-offset-2 hover:underline"
         >
           Want to integrate this in your app?
