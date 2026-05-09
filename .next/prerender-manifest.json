@@ -30,31 +30,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/_not-found": {
-      "initialStatus": 404,
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/_not-found",
-      "dataRoute": "/_not-found.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -79,7 +54,8 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/register": {
+    "/_not-found": {
+      "initialStatus": 404,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -92,80 +68,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/register",
-      "dataRoute": "/register.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/console/events": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/console/events",
-      "dataRoute": "/console/events.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/login": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/login",
-      "dataRoute": "/login.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/console/keys": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/console/keys",
-      "dataRoute": "/console/keys.rsc",
+      "srcRoute": "/_not-found",
+      "dataRoute": "/_not-found.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -199,7 +103,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/console/simulator": {
+    "/login": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -212,8 +116,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/console/simulator",
-      "dataRoute": "/console/simulator.rsc",
+      "srcRoute": "/login",
+      "dataRoute": "/login.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -223,7 +127,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/console": {
+    "/console/demo/a2a": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -236,8 +140,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/console",
-      "dataRoute": "/console.rsc",
+      "srcRoute": "/console/demo/a2a",
+      "dataRoute": "/console/demo/a2a.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -247,7 +151,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/demo/fintech": {
+    "/console/events": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -260,32 +164,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/demo/fintech",
-      "dataRoute": "/demo/fintech.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/demo/health": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/demo/health",
-      "dataRoute": "/demo/health.rsc",
+      "srcRoute": "/console/events",
+      "dataRoute": "/console/events.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -319,7 +199,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/demo": {
+    "/console": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -332,8 +212,56 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/demo",
-      "dataRoute": "/demo.rsc",
+      "srcRoute": "/console",
+      "dataRoute": "/console.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/console/simulator": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/console/simulator",
+      "dataRoute": "/console/simulator.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/register": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/register",
+      "dataRoute": "/register.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -367,7 +295,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/console/policies": {
+    "/console/keys": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -380,8 +308,56 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/console/policies",
-      "dataRoute": "/console/policies.rsc",
+      "srcRoute": "/console/keys",
+      "dataRoute": "/console/keys.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/demo/fintech": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/demo/fintech",
+      "dataRoute": "/demo/fintech.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/demo": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/demo",
+      "dataRoute": "/demo.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -415,7 +391,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/console/demo/a2a": {
+    "/console/policies": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -428,8 +404,32 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/console/demo/a2a",
-      "dataRoute": "/console/demo/a2a.rsc",
+      "srcRoute": "/console/policies",
+      "dataRoute": "/console/policies.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/demo/health": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/demo/health",
+      "dataRoute": "/demo/health.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -443,8 +443,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "62dc213114893e7bb6736182a4422ea2",
-    "previewModeSigningKey": "56fc82dd7e7a5f67bba0789b60ad224100c844eca271b27c90ca2b842df91b3a",
-    "previewModeEncryptionKey": "9ce6f49b33d9f29558b5a5386ce40b05729abc51a3b4fe7c75705d4c778c31a2"
+    "previewModeId": "6929fbb26a835f79f8d567740d9cdac3",
+    "previewModeSigningKey": "0eedddee1b8639c4d6306d724246d6dcb139191085d2f7db5cad8828b89c5414",
+    "previewModeEncryptionKey": "78a6a82b3330327edd543ccc5195ff764f4a2f4e12430985dd30c5a98364f004"
   }
 }
