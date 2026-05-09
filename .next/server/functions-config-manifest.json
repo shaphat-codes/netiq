@@ -1,8 +1,8 @@
 {
   "version": 1,
   "functions": {
-    "/api/netiq/a2a/get": {},
     "/api/netiq/a2a/card": {},
+    "/api/netiq/a2a/get": {},
     "/api/netiq/decide": {},
     "/api/netiq/a2a/send": {},
     "/api/netiq/session": {}
