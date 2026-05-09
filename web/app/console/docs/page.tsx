@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import { ConsolePage } from "@/components/console/ConsolePage";
-import { getApiBase } from "@/lib/api";
+import { getApiBase, NETIQ_PRODUCTION_API_ORIGIN } from "@/lib/api";
 
 const INTENTS = [
   "fraud_prevention",
@@ -136,6 +136,26 @@ export default function DocsPage() {
     [],
   );
 
+  /** Cursor remote MCP — Streamable HTTP against production API (no local Python). */
+  const cursorRemoteMcpJson = useMemo(
+    () =>
+      JSON.stringify(
+        {
+          mcpServers: {
+            netiq: {
+              url: `${NETIQ_PRODUCTION_API_ORIGIN}/mcp`,
+              headers: {
+                Authorization: "Bearer ${env:NETIQ_API_KEY}",
+              },
+            },
+          },
+        },
+        null,
+        2,
+      ),
+    [],
+  );
+
   const mcpHttpCurl = useMemo(
     () => `curl -X POST ${base}/mcp \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -239,9 +259,13 @@ export default function DocsPage() {
         <header className="space-y-2">
           <h1 className="text-on-surface text-2xl font-semibold tracking-tight">API reference</h1>
           <p className="text-on-surface-variant max-w-2xl text-sm">
-            NetIQ exposes the same decision pipeline through three protocols. Pick the one
-            your stack already speaks. All three honour the same API key, share the same
-            cross-sector memory, and produce identical audit records.
+            NetIQ exposes the same decision pipeline through three protocols. Pick the one your stack
+            already speaks. Production API host:{" "}
+            <code className="font-mono text-xs">{NETIQ_PRODUCTION_API_ORIGIN}</code>. Examples below use{" "}
+            <code className="font-mono text-xs">{base}</code> (from{" "}
+            <code className="font-mono text-xs">NEXT_PUBLIC_NETIQ_API_URL</code> in this browser session).
+            All three honour the same API key when required, share the same cross-sector memory, and
+            produce identical audit records.
           </p>
         </header>
 
@@ -299,6 +323,7 @@ export default function DocsPage() {
           <McpSection
             base={base}
             claudeConfig={claudeConfig}
+            cursorRemoteMcpJson={cursorRemoteMcpJson}
             mcpHttpCurl={mcpHttpCurl}
             mcpListCurl={mcpListCurl}
             copied={copied}
@@ -524,6 +549,7 @@ function RestSection({
 function McpSection({
   base,
   claudeConfig,
+  cursorRemoteMcpJson,
   mcpHttpCurl,
   mcpListCurl,
   copied,
@@ -531,6 +557,7 @@ function McpSection({
 }: {
   base: string;
   claudeConfig: string;
+  cursorRemoteMcpJson: string;
   mcpHttpCurl: string;
   mcpListCurl: string;
   copied: string | null;
@@ -587,15 +614,34 @@ function McpSection({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-on-surface text-base font-medium">Install in Claude Desktop / Cursor</h2>
+        <h2 className="text-on-surface text-base font-medium">Install in Cursor (production API)</h2>
         <p className="text-on-surface-variant text-sm">
-          Set <code className="font-mono text-xs">NETIQ_API_KEY</code> and add the snippet below to
-          your client&apos;s MCP config (e.g.{" "}
-          <code className="font-mono text-xs">claude_desktop_config.json</code>). Restart the
-          client. NetIQ tools become callable from natural-language prompts.
+          Point Cursor at the deployed Streamable HTTP endpoint — no local Python or repo clone
+          required. Add this to <code className="font-mono text-xs">~/.cursor/mcp.json</code> or{" "}
+          <code className="font-mono text-xs">.cursor/mcp.json</code>. Set{" "}
+          <code className="font-mono text-xs">NETIQ_API_KEY</code> in your environment (Cursor expands{" "}
+          <code className="font-mono text-xs">${"{env:NETIQ_API_KEY}"}</code>). Omit{" "}
+          <code className="font-mono text-xs">headers</code> if your deployment allows anonymous MCP (
+          <code className="font-mono text-xs">REQUIRE_API_KEY=false</code>). Restart Cursor after saving.
         </p>
         <Snippet
-          title="claude_desktop_config.json"
+          title="mcp.json — remote HTTP (netiq-api.onrender.com)"
+          content={cursorRemoteMcpJson}
+          onCopy={() => doCopy("cursor-remote", cursorRemoteMcpJson)}
+          copied={copied === "cursor-remote"}
+        />
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-on-surface text-base font-medium">Install in Claude Desktop / Cursor (local stdio)</h2>
+        <p className="text-on-surface-variant text-sm">
+          Run NetIQ&apos;s Python MCP server from a clone of the repo. Set{" "}
+          <code className="font-mono text-xs">NETIQ_API_KEY</code> and add the snippet below to your
+          client&apos;s MCP config (e.g. <code className="font-mono text-xs">claude_desktop_config.json</code>
+          ). Restart the client. NetIQ tools become callable from natural-language prompts.
+        </p>
+        <Snippet
+          title="claude_desktop_config.json — stdio"
           content={claudeConfig}
           onCopy={() => doCopy("claude", claudeConfig)}
           copied={copied === "claude"}

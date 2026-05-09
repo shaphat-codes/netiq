@@ -90,7 +90,12 @@ function parseEnvelope(raw: string): {
 
 type PreviewStep = { title: string; subtitle?: string; content: string };
 
-function buildWireRequestPreview(protocol: Protocol, mode: Mode, rawBody: string): PreviewStep[] {
+function buildWireRequestPreview(
+  protocol: Protocol,
+  mode: Mode,
+  rawBody: string,
+  includeAuth: boolean,
+): PreviewStep[] {
   let args: Record<string, unknown>;
   try {
     args = JSON.parse(rawBody) as Record<string, unknown>;
@@ -104,19 +109,22 @@ function buildWireRequestPreview(protocol: Protocol, mode: Mode, rawBody: string
   }
 
   const requestBody = { ...args, mode };
+  const authHeaders = includeAuth ? { Authorization: "Bearer <api_key>" } : {};
 
   if (protocol === "rest") {
     return [
       {
         title: "POST /decision/stream",
-        subtitle: "Direct backend call. Streams SSE events back.",
+        subtitle: includeAuth
+          ? "Direct backend call. Streams SSE events back."
+          : "Direct backend call (no Authorization when the API allows anonymous access). Streams SSE events back.",
         content: JSON.stringify(
           {
             method: "POST",
             path: "/decision/stream",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer <api_key>",
+              ...authHeaders,
               Accept: "text/event-stream",
             },
             body: requestBody,
@@ -139,7 +147,7 @@ function buildWireRequestPreview(protocol: Protocol, mode: Mode, rawBody: string
             path: "/mcp",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer <api_key>",
+              ...authHeaders,
             },
             body: {
               jsonrpc: "2.0",
@@ -161,7 +169,7 @@ function buildWireRequestPreview(protocol: Protocol, mode: Mode, rawBody: string
             path: "/mcp",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer <api_key>",
+              ...authHeaders,
             },
             body: {
               jsonrpc: "2.0",
@@ -196,14 +204,16 @@ function buildWireRequestPreview(protocol: Protocol, mode: Mode, rawBody: string
     },
     {
       title: "2. POST /a2a/tasks/sendSubscribe — start streaming task",
-      subtitle: "A2A task envelope with structured DataPart and lifecycle frames.",
+      subtitle: includeAuth
+        ? "A2A task envelope with structured DataPart and lifecycle frames."
+        : "Same envelope without Authorization when the API allows anonymous access.",
       content: JSON.stringify(
         {
           method: "POST",
           path: "/a2a/tasks/sendSubscribe",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer <api_key>",
+            ...authHeaders,
             Accept: "text/event-stream",
           },
           body: {
@@ -278,8 +288,9 @@ export default function SimulatorPage() {
   const decisionBody = (envelope?.data as Record<string, unknown> | undefined) ?? null;
   const httpStatus = envelope?.status ?? (out ? 0 : null);
   const wireRequestPreview = useMemo(
-    () => buildWireRequestPreview(protocol, mode, body),
-    [body, mode, protocol],
+    () =>
+      buildWireRequestPreview(protocol, mode, body, manualKey.trim().length > 0),
+    [body, manualKey, mode, protocol],
   );
 
   const send = useCallback(async () => {
@@ -292,11 +303,6 @@ export default function SimulatorPage() {
     setCurrentTool(null);
 
     const apiKey = manualKey.trim();
-    if (!apiKey) {
-      setOut(JSON.stringify({ ok: false, status: 0, data: { errors: ["Paste a Bearer API key first."] } }, null, 2));
-      setStreamState("error");
-      return;
-    }
     let parsed: Record<string, unknown>;
     try {
       parsed = JSON.parse(body);
@@ -425,7 +431,7 @@ export default function SimulatorPage() {
         2,
       ),
     );
-  }, [body, manualKey, mode, protocol]);
+  }, [body, manualKey, mode]);
 
   async function copyOut() {
     if (!out) return;
@@ -524,16 +530,26 @@ export default function SimulatorPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-on-surface-variant text-xs">API key</label>
+              <label className="text-on-surface-variant text-xs">
+                API key <span className="opacity-70">(optional)</span>
+              </label>
               <input
                 type="password"
                 value={manualKey}
                 onChange={(e) => setManualKey(e.target.value)}
                 spellCheck={false}
-                placeholder="Paste your full netiq_… secret"
+                placeholder="Leave empty if the API allows anonymous access"
                 autoComplete="off"
                 className="border-outline-variant bg-surface-container-low text-on-surface focus:border-on-surface w-full rounded-md border px-3 py-2 font-mono text-xs outline-none"
               />
+              <p className="text-on-surface-variant text-[11px] leading-snug">
+                Omit unless your backend sets{" "}
+                <code className="font-mono">REQUIRE_API_KEY=true</code> — then paste a key from{" "}
+                <Link href="/console/keys" className="text-on-surface underline">
+                  Keys
+                </Link>
+                .
+              </p>
             </div>
           </div>
         </section>
@@ -1455,30 +1471,33 @@ function McpSetupPanel({
 }) {
   const args = safeParseArgs(body);
   const callArgs = { ...args, mode } as Record<string, unknown>;
-  const keyDisplay = apiKey.trim() || "ntq_xxx_paste_your_key";
+  const keyTrim = apiKey.trim();
+
+  const stdioServerBlock: Record<string, unknown> = {
+    command: "python",
+    args: ["/absolute/path/to/netiq/mcp_server.py"],
+  };
+  if (keyTrim) {
+    (stdioServerBlock as { env: Record<string, string> }).env = { NETIQ_API_KEY: keyTrim };
+  }
 
   const stdioConfig = JSON.stringify(
     {
       mcpServers: {
-        netiq: {
-          command: "python",
-          args: ["/absolute/path/to/netiq/mcp_server.py"],
-          env: { NETIQ_API_KEY: keyDisplay },
-        },
+        netiq: stdioServerBlock,
       },
     },
     null,
     2,
   );
 
+  const authLine = keyTrim ? `  -H "Authorization: Bearer ${keyTrim}" \\\n` : "";
   const httpListCurl = `curl -X POST ${base}/mcp \\
-  -H "Authorization: Bearer ${keyDisplay}" \\
-  -H "Content-Type: application/json" \\
+${authLine}  -H "Content-Type: application/json" \\
   -d '${JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }, null, 2)}'`;
 
   const httpCallCurl = `curl -X POST ${base}/mcp \\
-  -H "Authorization: Bearer ${keyDisplay}" \\
-  -H "Content-Type: application/json" \\
+${authLine}  -H "Content-Type: application/json" \\
   -d '${JSON.stringify(
     {
       jsonrpc: "2.0",
@@ -1495,9 +1514,10 @@ function McpSetupPanel({
       <div className="space-y-3">
         <div className="text-on-surface text-xs font-medium">A. Stdio (Claude Desktop / Cursor)</div>
         <p className="text-on-surface-variant text-xs">
-          Add this to your client&apos;s MCP servers config. The server reads{" "}
-          <code className="font-mono text-[11px]">NETIQ_API_KEY</code> from env, so no header
-          handling is needed in the client.
+          Add this to your client&apos;s MCP servers config.{" "}
+          <code className="font-mono text-[11px]">NETIQ_API_KEY</code> is optional when the NetIQ
+          API allows anonymous access (
+          <code className="font-mono text-[11px]">REQUIRE_API_KEY=false</code>).
         </p>
         <Snippet
           title="claude_desktop_config.json / Cursor mcp.json"
@@ -1510,9 +1530,9 @@ function McpSetupPanel({
       <div className="space-y-3">
         <div className="text-on-surface text-xs font-medium">B. HTTP transport</div>
         <p className="text-on-surface-variant text-xs">
-          For clients that speak the MCP HTTP transport. Send Bearer auth on every request.
-          Run <code className="font-mono text-[11px]">tools/list</code> first to discover, then{" "}
-          <code className="font-mono text-[11px]">tools/call</code> to invoke.
+          For clients that speak the MCP HTTP transport. Include Bearer auth only when your API
+          requires keys. Run <code className="font-mono text-[11px]">tools/list</code> first to
+          discover, then <code className="font-mono text-[11px]">tools/call</code> to invoke.
         </p>
         <Snippet
           title="1. tools/list — discover NetIQ tools"
@@ -1543,13 +1563,13 @@ function A2aSetupPanel({
 }) {
   const args = safeParseArgs(body);
   const taskArgs = { skill: "decide", ...args, mode } as Record<string, unknown>;
-  const keyDisplay = apiKey.trim() || "ntq_xxx_paste_your_key";
+  const keyTrim = apiKey.trim();
+  const authLine = keyTrim ? `  -H "Authorization: Bearer ${keyTrim}" \\\n` : "";
 
   const cardCurl = `curl ${base}/.well-known/agent.json`;
 
   const sendCurl = `curl -X POST ${base}/a2a/tasks/send \\
-  -H "Authorization: Bearer ${keyDisplay}" \\
-  -H "Content-Type: application/json" \\
+${authLine}  -H "Content-Type: application/json" \\
   -d '${JSON.stringify(
     {
       id: "task-001",
@@ -1564,8 +1584,7 @@ function A2aSetupPanel({
   )}'`;
 
   const streamCurl = `curl -N -X POST ${base}/a2a/tasks/sendSubscribe \\
-  -H "Authorization: Bearer ${keyDisplay}" \\
-  -H "Content-Type: application/json" \\
+${authLine}  -H "Content-Type: application/json" \\
   -d '${JSON.stringify(
     {
       id: "task-002",
@@ -1597,9 +1616,9 @@ function A2aSetupPanel({
       <div className="space-y-3">
         <div className="text-on-surface text-xs font-medium">B. Send a task</div>
         <p className="text-on-surface-variant text-xs">
-          Wrap the shared decision arguments in an A2A task envelope as a structured
-          DataPart. Use sync or streaming depending on whether your agent wants live
-          progress.
+          Wrap the shared decision arguments in an A2A task envelope as a structured DataPart. Add
+          Bearer auth only when your API requires keys. Use sync or streaming depending on whether
+          your agent wants live progress.
         </p>
         <Snippet
           title="POST /a2a/tasks/send · synchronous"

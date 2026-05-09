@@ -6,6 +6,13 @@ export type ApiResponse<T = unknown> = {
   data: T | string;
 };
 
+/** Omit when empty so anonymous calls work when REQUIRE_API_KEY is false. */
+function bearerHeaders(apiKey: string): Record<string, string> {
+  const t = apiKey.trim();
+  if (!t) return {};
+  return { Authorization: `Bearer ${t}` };
+}
+
 async function postJSON<T = unknown>(
   path: string,
   apiKey: string,
@@ -16,7 +23,7 @@ async function postJSON<T = unknown>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      ...bearerHeaders(apiKey),
     },
     body: JSON.stringify(body),
   });
@@ -231,8 +238,8 @@ export async function streamA2ADecision(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
       Accept: "text/event-stream",
+      ...bearerHeaders(apiKey),
     },
     body: JSON.stringify({
       id: taskId,
@@ -403,8 +410,8 @@ export async function streamDecisionRun(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
       Accept: "text/event-stream",
+      ...bearerHeaders(apiKey),
     },
     body: JSON.stringify(body),
   });

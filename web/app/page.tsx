@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NETIQ_PRODUCTION_API_ORIGIN } from "@/lib/api";
 
 type Tab = "rest" | "mcp" | "a2a";
 
-const REST_SNIPPET = `curl -X POST https://api.netiq.dev/decision/run \\
+const REST_SNIPPET = `curl -X POST ${NETIQ_PRODUCTION_API_ORIGIN}/decision/run \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{ "intent": "fraud_prevention", "phone": "+233201234567", "mode": "agent" }'
@@ -36,10 +37,10 @@ const MCP_SNIPPET = `// Add to claude_desktop_config.json
 // and NetIQ orchestrates the right CAMARA APIs internally.`;
 
 const A2A_SNIPPET = `# 1. Discover NetIQ via its Agent Card
-curl https://api.netiq.dev/.well-known/agent.json
+curl ${NETIQ_PRODUCTION_API_ORIGIN}/.well-known/agent.json
 
 # 2. Send a task as one agent to another
-curl -X POST https://api.netiq.dev/a2a/tasks/send \\
+curl -X POST ${NETIQ_PRODUCTION_API_ORIGIN}/a2a/tasks/send \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{
     "id": "task-001",

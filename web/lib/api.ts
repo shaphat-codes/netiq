@@ -1,3 +1,6 @@
+/** Canonical production API origin (Flask on Render). Used in docs and landing snippets. */
+export const NETIQ_PRODUCTION_API_ORIGIN = "https://netiq-api.onrender.com";
+
 /**
  * NetIQ Flask API base URL. Use the same site as the UI in dev (e.g. localhost) so session cookies work.
  */
