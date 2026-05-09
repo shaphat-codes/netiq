@@ -1,0 +1,25 @@
+# Render Blueprint: connect this Git repo → New → Blueprint → select render.yaml
+# Set RAPIDAPI_KEY (and CORS_ORIGINS) under Environment in the dashboard after first deploy.
+
+services:
+  - type: web
+    name: netiq-api
+    runtime: docker
+    region: oregon
+    plan: free
+    dockerfilePath: ./Dockerfile.api
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: NETIQ_DB_PATH
+        value: /opt/netiq/data/netiq.db
+      - key: LOG_LEVEL
+        value: INFO
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CORS_ORIGINS
+        sync: false
