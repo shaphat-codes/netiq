@@ -1,0 +1,28 @@
+services:
+  netiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_NETIQ_API_URL: ${NEXT_PUBLIC_NETIQ_API_URL:-http://localhost:8080}
+    ports:
+      - "${HOST_FLASK_PORT:-8080}:8080"
+      - "${HOST_NEXT_PORT:-3000}:3000"
+    environment:
+      RAPIDAPI_KEY: ${RAPIDAPI_KEY:-}
+      RAPIDAPI_HOST: ${RAPIDAPI_HOST:-network-as-code.nokia.rapidapi.com}
+      RAPIDAPI_BASE_URL: ${RAPIDAPI_BASE_URL:-https://network-as-code.p-eu.rapidapi.com}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      NETIQ_API_URL: http://127.0.0.1:8080
+      FLASK_PORT: "8080"
+      NEXT_PORT: "3000"
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      NETIQ_DEMO_API_KEY: ${NETIQ_DEMO_API_KEY:-}
+      NETIQ_DB_PATH: ${NETIQ_DB_PATH:-/data/netiq.db}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - netiq-data:/data
+
+volumes:
+  netiq-data:
