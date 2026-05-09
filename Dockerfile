@@ -1,11 +1,11 @@
 FROM node:20-bookworm-slim AS web-builder
-WORKDIR /app/web
+WORKDIR /app
 
-COPY web/package.json web/package-lock.json ./
+COPY package.json package-lock.json ./
+COPY web ./web
 RUN npm ci
 
-COPY web/ ./
-
+WORKDIR /app/web
 ARG NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_NETIQ_API_URL=${NEXT_PUBLIC_NETIQ_API_URL}
 

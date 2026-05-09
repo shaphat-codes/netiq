@@ -26,6 +26,7 @@ netiq.log
 *.log
 
 # Next.js / Node (when working from repo root)
+node_modules/
 web/node_modules/
 web/.next/
 web/out/
