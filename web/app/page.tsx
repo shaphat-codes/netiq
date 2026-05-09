@@ -68,7 +68,7 @@ export default function Home() {
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-5 sm:h-16 sm:px-6">
           <Link
             href="/"
-            className="font-[family-name:'Space_Grotesk'] text-on-surface text-lg font-semibold tracking-tight sm:text-xl"
+            className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-lg font-semibold tracking-tight sm:text-xl"
           >
             NetIQ
           </Link>
@@ -122,7 +122,7 @@ export default function Home() {
               <span className="bg-success h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden />
               Nokia Network as Code · CAMARA
             </p>
-            <h1 className="font-[family-name:'Space_Grotesk'] text-on-surface mt-8 text-[2.35rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-[3.5rem]">
+            <h1 className="font-[family-name:var(--font-space-grotesk)] text-on-surface mt-8 text-[2.35rem] font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-[3.5rem]">
               Turn raw signal into
               <span className="text-on-surface-variant font-normal"> — </span>
               <span className="from-on-surface to-on-surface-variant bg-gradient-to-br bg-clip-text text-transparent">
@@ -172,7 +172,7 @@ export default function Home() {
                   className="bg-background/60 px-3 py-4 text-center backdrop-blur-[2px] sm:px-5 sm:py-5"
                 >
                   <dt className="sr-only">{s.label}</dt>
-                  <dd className="font-[family-name:'Space_Grotesk'] text-on-surface text-2xl font-semibold tabular-nums sm:text-3xl">
+                  <dd className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-2xl font-semibold tabular-nums sm:text-3xl">
                     {s.value}
                   </dd>
                   <div className="text-on-surface-variant mt-1 text-[10px] uppercase tracking-wide sm:text-xs">{s.label}</div>
@@ -185,7 +185,7 @@ export default function Home() {
         {/* Code preview */}
         <section className="mx-auto max-w-4xl px-5 pb-20 sm:px-6 sm:pb-28">
           <div className="mb-8 text-center sm:mb-10">
-            <h2 className="font-[family-name:'Space_Grotesk'] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h2 className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
               Same pipeline. Your protocol.
             </h2>
             <p className="text-on-surface-variant mx-auto mt-2 max-w-lg text-sm sm:text-base">
@@ -226,7 +226,7 @@ export default function Home() {
         <section className="border-outline-variant border-t">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-28">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-[family-name:'Space_Grotesk'] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
+              <h2 className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
                 Built for the agent economy
               </h2>
               <p className="text-on-surface-variant mt-3 text-base leading-relaxed">
@@ -259,7 +259,7 @@ export default function Home() {
         <section className="border-outline-variant border-t">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-6 sm:py-28">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="font-[family-name:'Space_Grotesk'] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
+              <h2 className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
                 Decisions, not a dozen endpoints
               </h2>
               <p className="text-on-surface-variant mt-3 text-base leading-relaxed">
@@ -308,7 +308,7 @@ const result = await decide({
               }}
             />
             <div className="relative">
-              <h2 className="font-[family-name:'Space_Grotesk'] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
+              <h2 className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-2xl font-semibold tracking-tight sm:text-3xl">
                 Open the console in one click
               </h2>
               <p className="text-on-surface-variant mx-auto mt-3 max-w-md text-sm sm:text-base">
@@ -327,7 +327,7 @@ const result = await decide({
 
         <footer className="border-outline-variant border-t">
           <div className="text-on-surface-variant mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-5 py-10 text-xs sm:flex-row sm:px-6">
-            <span className="font-[family-name:'Space_Grotesk'] text-on-surface text-sm font-medium">
+            <span className="font-[family-name:var(--font-space-grotesk)] text-on-surface text-sm font-medium">
               © {new Date().getFullYear()} NetIQ
             </span>
             <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
