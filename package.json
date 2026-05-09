@@ -12,7 +12,7 @@
     "react-dom": "19.2.6"
   },
   "scripts": {
-    "build": "npm run build -w web",
+    "build": "npm run build -w web && node scripts/sync-vercel-next-output.js",
     "dev": "npm run dev -w web",
     "start": "npm run start -w web",
     "lint": "npm run lint -w web"

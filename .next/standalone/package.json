@@ -1,0 +1,23 @@
+{
+  "name": "netiq",
+  "private": true,
+  "workspaces": ["web"],
+  "dependencies": {
+    "next": "15.5.15",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "overrides": {
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "scripts": {
+    "build": "npm run build -w web && node scripts/sync-vercel-next-output.js",
+    "dev": "npm run dev -w web",
+    "start": "npm run start -w web",
+    "lint": "npm run lint -w web"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
