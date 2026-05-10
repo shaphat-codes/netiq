@@ -462,11 +462,22 @@ function BubbleFooter({
               {tools.map((t) => (
                 <li key={`${t.step}-${t.tool}`} className="flex items-center gap-2">
                   <span className="font-mono text-[10px] opacity-50">#{t.step}</span>
-                  <span className="material-symbols-outlined text-[12px] leading-none">
-                    {t.degraded ? "error" : "check_circle"}
+                  <span
+                    className={`material-symbols-outlined text-[12px] leading-none ${
+                      t.degraded ? "text-warning" : "text-success"
+                    }`}
+                    title={
+                      t.degraded
+                        ? "Operator API did not return this signal (may be unavailable or misconfigured)"
+                        : "Signal retrieved"
+                    }
+                  >
+                    {t.degraded ? "wifi_off" : "check_circle"}
                   </span>
                   <span className="text-on-surface">{prettifyTool(t.tool)}</span>
-                  {t.degraded ? <span className="text-warning">(degraded)</span> : null}
+                  {t.degraded ? (
+                    <span className="text-warning">(unavailable)</span>
+                  ) : null}
                 </li>
               ))}
             </ul>

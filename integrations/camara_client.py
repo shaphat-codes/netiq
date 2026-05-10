@@ -34,6 +34,12 @@ def _with_cache(name: str, key: str, func: Callable[[], Dict[str, Any]]) -> Dict
         logger.debug("Cache hit for %s", cache_key)
         return cached
     value = func()
+    # Never cache degraded/failed signal payloads. A transient outage or missing
+    # RAPIDAPI_KEY would otherwise poison the cache for CACHE_TTL_SECONDS and
+    # make chat/simulator show "degraded" long after the issue is fixed.
+    if isinstance(value, dict) and value.get("_degraded"):
+        logger.debug("Skipping cache for degraded result %s", cache_key)
+        return value
     _cache_set(cache_key, value, CONFIG.CACHE_TTL_SECONDS)
     return value
 

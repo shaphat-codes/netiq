@@ -296,6 +296,13 @@ def _body_for_operation(operation: str, phone: str, extra: Optional[Dict[str, An
 
 
 def call_nac(operation: str, phone: str, extra: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], Optional[str]]:
+    if not (CONFIG.RAPIDAPI_KEY or "").strip():
+        msg = (
+            "RAPIDAPI_KEY is not set — add your Nokia Network as Code / RapidAPI key "
+            "to the API server's environment"
+        )
+        return {"_degraded": True, "_error": msg, "_operation": operation}, msg
+
     if operation in UNAVAILABLE_OPERATIONS:
         msg = (
             f"operation {operation} is unavailable in this NaC project "
