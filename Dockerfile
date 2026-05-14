@@ -8,6 +8,8 @@ RUN npm ci
 WORKDIR /app/web
 ARG NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_NETIQ_API_URL=${NEXT_PUBLIC_NETIQ_API_URL}
+# Opt-in standalone for this image only (see web/next.config.ts).
+ENV NETIQ_NEXT_STANDALONE=1
 
 RUN npx next build
 
