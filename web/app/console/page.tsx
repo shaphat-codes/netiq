@@ -98,8 +98,8 @@ export default function ConsoleHome() {
               <span className="material-symbols-outlined text-[16px] leading-none">chevron_right</span>
             </Link>
           </div>
-          <div className="border-outline-variant overflow-hidden rounded-md border">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="border-outline-variant -mx-4 overflow-x-auto rounded-md border sm:mx-0">
+            <table className="w-full min-w-[520px] border-collapse text-left text-sm">
               <thead>
                 <tr className="border-outline-variant border-b">
                   <th className="text-on-surface-variant px-4 py-2.5 text-xs font-medium">Time</th>

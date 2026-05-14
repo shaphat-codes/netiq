@@ -233,7 +233,7 @@ export default function PoliciesPage() {
   return (
     <ConsolePage title="Policies">
       <div className="space-y-8">
-        <header className="flex items-start justify-between gap-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <div className="space-y-1">
             <h1 className="text-on-surface text-2xl font-semibold tracking-tight">Policies</h1>
             <p className="text-on-surface-variant max-w-2xl text-sm">

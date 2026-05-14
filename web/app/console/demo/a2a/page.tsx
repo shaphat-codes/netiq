@@ -889,7 +889,7 @@ function DecisionSummary({ data }: { data: DecisionArtifactData }) {
     typeof data.risk_score === "number" ? Math.round(data.risk_score) : null;
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-x-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-x-6">
         <div className="space-y-1">
           <div className="text-on-surface-variant text-xs">Decision</div>
           <DecisionBadge d={decision} />

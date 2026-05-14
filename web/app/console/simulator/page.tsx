@@ -697,7 +697,7 @@ export default function SimulatorPage() {
 
                 {decision ? (
                   <div className="space-y-3">
-                    <div className="border-outline-variant grid grid-cols-3 gap-x-6 rounded-md border p-4">
+                    <div className="border-outline-variant grid grid-cols-1 gap-4 rounded-md border p-4 sm:grid-cols-3 sm:gap-x-6">
                       <DecisionStat decision={decision} />
                       <ConfidenceStat value={confidence} />
                       <RiskStat value={riskScore} />
@@ -917,7 +917,7 @@ function ProtocolStepsPanel({
           return (
             <li
               key={`${idx}-${row.phase}`}
-              className="animate-fade-slide-in grid grid-cols-[40px_220px_1fr] gap-3 px-4 py-3"
+              className="animate-fade-slide-in grid grid-cols-1 gap-2 px-3 py-3 sm:grid-cols-[40px_minmax(0,8rem)_1fr] sm:gap-3 sm:px-4 md:grid-cols-[40px_220px_1fr]"
             >
               <span className="text-on-surface-variant font-mono text-xs">
                 {String(idx + 1).padStart(2, "0")}
@@ -1288,7 +1288,7 @@ function LiveTracePanel({
         {steps.map((row, idx) => (
           <li
             key={`${idx}-${row.kind}`}
-            className="animate-fade-slide-in grid grid-cols-[40px_200px_1fr] gap-3 px-4 py-3"
+            className="animate-fade-slide-in grid grid-cols-1 gap-2 px-3 py-3 sm:grid-cols-[40px_minmax(0,7.5rem)_1fr] sm:gap-3 sm:px-4 md:grid-cols-[40px_200px_1fr]"
           >
             {row.kind === "tool" ? (
               <ToolStepRow row={row} />
@@ -1300,7 +1300,7 @@ function LiveTracePanel({
           </li>
         ))}
         {streaming && currentTool ? (
-          <li className="animate-fade-slide-in grid grid-cols-[40px_200px_1fr] gap-3 px-4 py-3">
+          <li className="animate-fade-slide-in grid grid-cols-1 gap-2 px-3 py-3 sm:grid-cols-[40px_minmax(0,7.5rem)_1fr] sm:gap-3 sm:px-4 md:grid-cols-[40px_200px_1fr]">
             <span className="text-on-surface-variant font-mono text-xs">…</span>
             <span className="text-warning inline-flex items-center gap-1.5 text-sm font-medium">
               <span className="material-symbols-outlined animate-pulse-soft text-[14px] leading-none">

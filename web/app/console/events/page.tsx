@@ -315,8 +315,8 @@ export default function EventsPage() {
           </div>
 
           {/* Table */}
-          <div className="border-outline-variant overflow-hidden rounded-md border">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="border-outline-variant -mx-1 overflow-x-auto rounded-md border sm:mx-0">
+            <table className="w-full min-w-[600px] border-collapse text-left text-sm">
               <thead>
                 <tr className="border-outline-variant border-b">
                   <th className="text-on-surface-variant px-4 py-2.5 text-xs font-medium">Time (UTC)</th>

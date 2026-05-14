@@ -90,7 +90,7 @@ export default function KeysPage() {
   return (
     <ConsolePage title="API keys">
       <div className="space-y-12">
-        <header className="flex items-start justify-between gap-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <div className="space-y-1">
             <h1 className="text-on-surface text-2xl font-semibold tracking-tight">API keys</h1>
             <p className="text-on-surface-variant max-w-xl text-sm">
@@ -109,8 +109,8 @@ export default function KeysPage() {
         </header>
 
         {/* Key list */}
-        <section className="border-outline-variant overflow-hidden rounded-md border">
-          <table className="w-full border-collapse text-left text-sm">
+        <section className="border-outline-variant -mx-1 overflow-x-auto rounded-md border sm:mx-0">
+          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <thead>
               <tr className="border-outline-variant border-b">
                 <th className="text-on-surface-variant px-4 py-2.5 text-xs font-medium">Name</th>

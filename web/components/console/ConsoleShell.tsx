@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
+import { ConsoleLayoutProvider } from "@/contexts/console-layout-context";
 import { Sidebar } from "./Sidebar";
 
 export function ConsoleShell({ children }: { children: React.ReactNode }) {
@@ -28,9 +29,11 @@ export function ConsoleShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="bg-background text-on-background font-body min-h-screen">
-      <Sidebar />
-      <div className="ml-60 flex min-h-screen min-w-0 flex-1 flex-col">{children}</div>
-    </div>
+    <ConsoleLayoutProvider>
+      <div className="bg-background text-on-background font-body min-h-screen">
+        <Sidebar />
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col md:ml-60">{children}</div>
+      </div>
+    </ConsoleLayoutProvider>
   );
 }
