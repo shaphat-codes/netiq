@@ -7,12 +7,8 @@ const configDir = path.dirname(fileURLToPath(import.meta.url));
 const truthy = (v: string | undefined) => v === "1" || v === "true";
 
 /**
- * Monorepo / Docker only. **Never** set on Vercel.
- *
- * Pointing `outputFileTracingRoot` at `..` when the deploy root is `web/`
- * breaks serverless NFT: the function bundle can omit `.next`, and `/api/*`
- * returns 500 ("Could not find a production build in /var/task/.next") even
- * though `VERCEL_*` is sometimes unset while `next.config` is evaluated.
+ * Monorepo / Docker only: trace from repo parent (e.g. `/app` in Dockerfile).
+ * **Never** set on Vercel when Root Directory = `web`.
  */
 const useMonorepoTraceRoot = truthy(process.env.NETIQ_MONOREPO_TRACE_ROOT);
 
@@ -26,9 +22,29 @@ const useStandaloneOutput =
   truthy(process.env.NETIQ_DOCKER_IMAGE);
 
 const nextConfig: NextConfig = {
-  ...(useMonorepoTraceRoot
-    ? { outputFileTracingRoot: path.join(configDir, "..") }
-    : {}),
+  /**
+   * Default: lock tracing to this app (`web/`). Next can otherwise infer a
+   * workspace root above `web/`; NFT then references `../node_modules/...`,
+   * and Vercel Root Directory = `web` **does not ship parent paths** in the
+   * serverless bundle → launcher finds no `/var/task/.next`.
+   */
+  outputFileTracingRoot: useMonorepoTraceRoot
+    ? path.join(configDir, "..")
+    : configDir,
+  /**
+   * Belt-and-suspenders: ensure server traces always pull core `.next` files
+   * (see outputFileTracingIncludes in Next docs).
+   */
+  outputFileTracingIncludes: {
+    "/*": [
+      ".next/BUILD_ID",
+      ".next/required-server-files.json",
+      ".next/routes-manifest.json",
+      ".next/prerender-manifest.json",
+      ".next/package.json",
+      ".next/server/**/*",
+    ],
+  },
   ...(useStandaloneOutput ? { output: "standalone" as const } : {}),
   images: {
     remotePatterns: [
