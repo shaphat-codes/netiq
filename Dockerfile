@@ -1,15 +1,14 @@
 FROM node:20-bookworm-slim AS web-builder
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-COPY web ./web
+# Self-contained Next app (no npm workspace hoist to a parent `node_modules`).
+# Hoisted traces break Vercel when Root Directory = `web` — see web/next.config.ts.
+COPY web/package.json web/package-lock.json ./
 RUN npm ci
 
-WORKDIR /app/web
+COPY web/ ./
 ARG NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_NETIQ_API_URL=${NEXT_PUBLIC_NETIQ_API_URL}
-# Monorepo trace root + standalone: opt-in only (see web/next.config.ts). Never set these on Vercel.
-ENV NETIQ_MONOREPO_TRACE_ROOT=1
 ENV NETIQ_NEXT_STANDALONE=1
 ENV NETIQ_DOCKER_IMAGE=1
 
@@ -41,10 +40,9 @@ COPY examples ./examples
 COPY scripts/docker-entrypoint.sh ./scripts/docker-entrypoint.sh
 RUN chmod +x ./scripts/docker-entrypoint.sh
 
-# Standalone layout is flat when only `web/` exists in the build context (no repo-root lockfile).
-COPY --from=web-builder /app/web/.next/standalone /opt/netiq/web-standalone
-COPY --from=web-builder /app/web/.next/static /opt/netiq/web-standalone/.next/static
-COPY --from=web-builder /app/web/public /opt/netiq/web-standalone/public
+COPY --from=web-builder /app/.next/standalone /opt/netiq/web-standalone
+COPY --from=web-builder /app/.next/static /opt/netiq/web-standalone/.next/static
+COPY --from=web-builder /app/public /opt/netiq/web-standalone/public
 
 ENV PYTHONUNBUFFERED=1 \
     NEXT_PORT=3000 \

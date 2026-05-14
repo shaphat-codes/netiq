@@ -2,7 +2,7 @@
 
 **NetIQ** is a trust-and-decision layer over **Nokia Network as Code** / **GSMA CAMARA** telco APIs. Clients send `phone`, `intent`, and `context`; the platform returns a structured decision (e.g. ALLOW, VERIFY, BLOCK) with confidence, reasons, trace, and cross-sector **phone-number memory**. The same engine is exposed over **REST**, **MCP** (stdio + HTTP), and **A2A**.
 
-**Stack (summary):** Python **Flask** API + **SQLite** + optional **OpenAI**; **Next.js 15** (App Router) + **React 19** + **Tailwind** for the console and marketing site. npm **workspace** at repo root with the app in `web/`.
+**Stack (summary):** Python **Flask** API + **SQLite** + optional **OpenAI**; **Next.js 15** (App Router) + **React 19** + **Tailwind** for the console and marketing site. The Next app lives in **`web/`** with its own `package-lock.json` (no npm **workspace** hoist to the repo root — that pattern broke Vercel serverless traces).
 
 ---
 
@@ -75,9 +75,9 @@ flowchart TB
 
 In production the UI often sits on **Vercel** and the API on **Render** (or similar). The browser calls Flask **directly** using `NEXT_PUBLIC_NETIQ_API_URL`. Next **Route Handlers** under `web/app/api/netiq/*` proxy some flows server-side (e.g. demos) using `NETIQ_DEMO_API_KEY` so secrets stay off the client.
 
-**Vercel:** **Root Directory = `web`** is the recommended setup. `web/next.config.ts` sets **`outputFileTracingRoot` to the `web/` folder by default** so file tracing never depends on the repo parent. If Next is allowed to treat the **monorepo root** as the trace root while Vercel only ships **`web/`**, serverless NFT omits paths under **`../`** (including pieces of **`.next`**) and you get **“Could not find a production build in `/var/task/.next`”** from `___next_launcher.cjs` even though `next build` succeeded. Do **not** set **`NETIQ_MONOREPO_TRACE_ROOT`**, **`NETIQ_NEXT_STANDALONE`**, or **`NETIQ_DOCKER_IMAGE`** on the Vercel project (Docker/repo-root only). In **Project → Settings → Build & Deployment → Root Directory**, keep **“Include source files outside of the Root Directory in the Build Step”** **enabled** if you install from the repo root. Set **`NEXT_PUBLIC_NETIQ_API_URL`** and **`NETIQ_DEMO_API_KEY`** (if used) on Vercel for demo sign-in.
+**Vercel:** **Root Directory = `web`** (recommended). Dependencies install under **`web/node_modules`** only, so Next’s output file traces never point at **`../../node_modules/...`** outside the deployed folder — that mismatch is what produced **“Could not find a production build in `/var/task/.next`”** from **`___next_launcher.cjs`** (static pages could still work; **`/api/*`** died). Root **`vercel.json`** is only for deploys whose project root is the **repo** (it uses **`npm ci --prefix web`**). Set **`NEXT_PUBLIC_NETIQ_API_URL`** and **`NETIQ_DEMO_API_KEY`** (if used) on the Vercel project.
 
-**Docker / repo-root build:** `Dockerfile` sets **`NETIQ_MONOREPO_TRACE_ROOT`** (trace from `/app`, parent of `web/`) plus **`NETIQ_NEXT_STANDALONE`** and **`NETIQ_DOCKER_IMAGE`**. Root **`npm run build`** prefixes **`NETIQ_MONOREPO_TRACE_ROOT=1`** for the workspace Next build and runs `scripts/sync-vercel-next-output.js` when `VERCEL_ENV` or `VERCEL` is `1`/`true`.
+**Docker / repo-root:** `Dockerfile` builds Next from **`web/`** alone. Root **`npm run build`** runs **`npm run build --prefix web`** and `scripts/sync-vercel-next-output.js` when `VERCEL_ENV` or `VERCEL` is `1`/`true`.
 
 ---
 
@@ -100,6 +100,6 @@ In production the UI often sits on **Vercel** and the API on **Render** (or simi
 
 ## Running locally
 
-Use **two terminals**: (1) Flask — `python app.py` from the repo root with a `.env` containing at least `RAPIDAPI_KEY` for real CAMARA calls; (2) Next — from root `npm ci && npm run dev` after copying `web/.env.example` to `web/.env.local` with `NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080`.
+Use **two terminals**: (1) Flask — `python app.py` from the repo root with a `.env` containing at least `RAPIDAPI_KEY` for real CAMARA calls; (2) Next — **`npm ci --prefix web`** (or `cd web && npm ci`) then **`npm run dev --prefix web`** from the repo root, after copying `web/.env.example` to `web/.env.local` with `NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080`.
 
 More detail: **`web/README.md`** (frontend and demo setup).
