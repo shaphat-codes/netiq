@@ -4,31 +4,31 @@ import type { NextConfig } from "next";
 
 const configDir = path.dirname(fileURLToPath(import.meta.url));
 
-/**
- * Vercel / `vercel dev`: never point `outputFileTracingRoot` outside `web/`
- * (breaks serverless NFT and you get "Could not find a production build in
- * /var/task/.next"). Env can differ between CI steps; treat several signals.
- */
-const runningOnVercel = Boolean(
-  process.env.VERCEL_ENV ||
-    process.env.VERCEL_URL ||
-    process.env.VERCEL === "1" ||
-    process.env.VERCEL === "true",
-);
+const truthy = (v: string | undefined) => v === "1" || v === "true";
 
 /**
- * `standalone` is **only** for Docker (`Dockerfile` copies
- * `web/.next/standalone`). Default output must stay non-standalone so Vercel
- * (and `next start` locally) keep `.next` where the platform expects it.
- * If `next build` ever runs without `VERCEL_*` set, inferring "Vercel" fails
- * and standalone used to break `/api/*` with the missing `.next` error above.
+ * Monorepo / Docker only. **Never** set on Vercel.
+ *
+ * Pointing `outputFileTracingRoot` at `..` when the deploy root is `web/`
+ * breaks serverless NFT: the function bundle can omit `.next`, and `/api/*`
+ * returns 500 ("Could not find a production build in /var/task/.next") even
+ * though `VERCEL_*` is sometimes unset while `next.config` is evaluated.
+ */
+const useMonorepoTraceRoot = truthy(process.env.NETIQ_MONOREPO_TRACE_ROOT);
+
+/**
+ * Docker image only — requires both flags so a stray `NETIQ_NEXT_STANDALONE`
+ * on Vercel cannot re-enable standalone (Vercel needs the default `.next`
+ * layout under `/var/task/.next`).
  */
 const useStandaloneOutput =
-  process.env.NETIQ_NEXT_STANDALONE === "1" ||
-  process.env.NETIQ_NEXT_STANDALONE === "true";
+  truthy(process.env.NETIQ_NEXT_STANDALONE) &&
+  truthy(process.env.NETIQ_DOCKER_IMAGE);
 
 const nextConfig: NextConfig = {
-  ...(!runningOnVercel ? { outputFileTracingRoot: path.join(configDir, "..") } : {}),
+  ...(useMonorepoTraceRoot
+    ? { outputFileTracingRoot: path.join(configDir, "..") }
+    : {}),
   ...(useStandaloneOutput ? { output: "standalone" as const } : {}),
   images: {
     remotePatterns: [

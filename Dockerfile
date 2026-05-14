@@ -8,8 +8,10 @@ RUN npm ci
 WORKDIR /app/web
 ARG NEXT_PUBLIC_NETIQ_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_NETIQ_API_URL=${NEXT_PUBLIC_NETIQ_API_URL}
-# Opt-in standalone for this image only (see web/next.config.ts).
+# Monorepo trace root + standalone: opt-in only (see web/next.config.ts). Never set these on Vercel.
+ENV NETIQ_MONOREPO_TRACE_ROOT=1
 ENV NETIQ_NEXT_STANDALONE=1
+ENV NETIQ_DOCKER_IMAGE=1
 
 RUN npx next build
 

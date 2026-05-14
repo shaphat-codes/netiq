@@ -17,14 +17,23 @@ export const dynamic = "force-dynamic";
 const E164 = /^\+[1-9]\d{6,14}$/;
 
 export async function GET() {
-  const session = await readSession();
-  if (!session) {
+  try {
+    const session = await readSession();
+    if (!session) {
+      return NextResponse.json(
+        { ok: false, status: 401, errors: ["No active demo session"] },
+        { status: 401 }
+      );
+    }
+    return NextResponse.json({ ok: true, session });
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Unexpected error reading session";
     return NextResponse.json(
-      { ok: false, status: 401, errors: ["No active demo session"] },
-      { status: 401 }
+      { ok: false, status: 500, errors: [message] },
+      { status: 500 }
     );
   }
-  return NextResponse.json({ ok: true, session });
 }
 
 export async function DELETE() {
