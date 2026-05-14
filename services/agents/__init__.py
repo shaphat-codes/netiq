@@ -13,7 +13,12 @@ from services.agents.base import Agent, Trace
 from services.agents.risk_agent import RiskAgent
 from services.agents.network_agent import NetworkAgent
 from services.agents.decision_agent import DecisionAgent
-from services.agents.orchestrator_agent import OrchestratorAgent, run_agent_pipeline, _run_deterministic
+from services.agents.orchestrator_agent import (
+    OrchestratorAgent,
+    run_agent_pipeline,
+    run_deterministic_pipeline,
+    _run_deterministic,
+)
 from services.agents.llm_agent import run_llm_pipeline
 from services.agents.policy_mode import run_policy_pipeline
 from services.agents.visualization import build_visualization_payload
@@ -26,6 +31,7 @@ __all__ = [
     "DecisionAgent",
     "OrchestratorAgent",
     "run_agent_pipeline",
+    "run_deterministic_pipeline",
     "run_llm_pipeline",
     "_run_deterministic",
     "run_policy_pipeline",

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import { useDemoSession } from "@/components/demo/DemoSessionProvider";
 import { runAction } from "./client";
 import type { ContextPayload, NetiqDecision } from "./types";
 
@@ -30,6 +31,9 @@ const INITIAL: ActionRunState = {
  * closes and reopens for the same action.
  */
 export function useSectorRunner() {
+  const { session } = useDemoSession();
+  const phone = session?.phone;
+
   const [state, setState] = useState<Record<string, ActionRunState>>({});
 
   const get = useCallback(
@@ -50,7 +54,10 @@ export function useSectorRunner() {
         ...prev,
         [key]: { phase: "running", decision: null, error: null },
       }));
-      const res = await runAction(input);
+      const res = await runAction({
+        ...input,
+        phone: phone ?? undefined,
+      });
       setState((prev) => ({
         ...prev,
         [key]: res.ok
@@ -63,7 +70,7 @@ export function useSectorRunner() {
       }));
       return res;
     },
-    []
+    [phone],
   );
 
   return { get, run, reset };

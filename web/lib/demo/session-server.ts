@@ -75,7 +75,7 @@ type RunDecisionInput = {
   intent: string;
   phone: string;
   context?: ContextPayload;
-  mode?: "agent" | "policy";
+  mode?: "agent" | "policy" | "deterministic";
 };
 
 /**

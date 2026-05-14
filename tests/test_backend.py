@@ -82,6 +82,24 @@ def test_agent_run_shortcut(client):
     assert "NetworkAgent" in body.get("selected_agents", [])
 
 
+def test_decision_run_deterministic(client):
+    """Deterministic mode skips the LLM; same REST shape as agent."""
+    r = client.post(
+        "/decision/run",
+        json={
+            "intent": "onboarding",
+            "phone": "+9999999105",
+            "mode": "deterministic",
+            "context": {},
+        },
+    )
+    assert r.status_code == 200, r.get_data(as_text=True)
+    body = r.get_json()
+    assert body["mode"] == "deterministic"
+    assert body["decision"] in ("ALLOW", "VERIFY", "BLOCK")
+    assert body.get("policy_applied", {}).get("source") == "deterministic_mode"
+
+
 def test_policy_mode(client):
     client.post(
         "/api/v1/auth/register",

@@ -56,9 +56,39 @@ Four thin sector apps share one NetIQ trust layer:
 - `/demo/health` — **CareLink** (telehealth consults)
 - `/demo/agri` — **FarmRoute** (co-op payouts and field ops)
 
-Each app has a NetIQ sign-in panel and two NetIQ-gated actions. They all hit
-the same Next Route Handler (`/api/netiq/decide`) which forwards to the Flask
-`/decision/run` endpoint with the demo API key.
+Each app has a NetIQ sign-in panel and two NetIQ-gated actions. By default they
+POST to **`/api/netiq/decide`**, which forwards to Flask **`/decision/run`** with
+`NETIQ_DEMO_API_KEY` on the server. That is **one backend decision per action**
+(not multiple chained APIs). It feels slower than the **console simulator**
+because the simulator calls Flask **directly** from the browser (`NEXT_PUBLIC_NETIQ_API_URL`),
+while demos add a **Next hop** (and on Vercel, a **serverless** hop + possible
+cold start) before the same `/decision/run` work runs.
+
+### Faster demos (split Vercel + API host)
+
+Set in `web/.env.local` (and Vercel env for the **Next** project):
+
+```bash
+NEXT_PUBLIC_NETIQ_DEMO_DIRECT=1
+# Optional: same tenant scoping as NETIQ_DEMO_API_KEY; this value is public in the bundle.
+# NEXT_PUBLIC_NETIQ_DEMO_BROWSER_API_KEY=ntq_your_demo_key
+```
+
+Ensure the Flask **`CORS_ORIGINS`** includes your Next origin (e.g.
+`https://your-app.vercel.app`). Sign-in still uses `/api/netiq/session` so the
+server-side demo key is not required for every action.
+
+### Faster demo sign-in (phone verification)
+
+`/api/netiq/session` forwards one **`POST /decision/run`** to Flask. By default it
+uses **`mode=deterministic`**: the same intent-based agents (e.g. RiskAgent for
+onboarding) and fused **DecisionAgent** output as full agent mode, but **without**
+the LLM tool loop — much faster for live demos. Override on the **Next** host only:
+
+```bash
+# Optional: agent = LLM-led sign-in; policy = tenant rules (requires configured rules).
+# NETIQ_DEMO_SIGNIN_MODE=deterministic
+```
 
 ### One-time setup
 

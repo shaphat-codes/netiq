@@ -46,10 +46,11 @@ SPEC = {
         "/decision/run": {
             "post": {
                 "tags": ["Decision"],
-                "summary": "Unified decision endpoint (policy or agent mode)",
+                "summary": "Unified decision endpoint (policy, agent, or deterministic mode)",
                 "description": (
-                    "Select `mode=policy` for deterministic tenant-rule-based decisions, "
-                    "or `mode=agent` for dynamic CAMARA-signal orchestration by specialized agents."
+                    "Select `mode=policy` for tenant-rule-based decisions, "
+                    "`mode=agent` for LLM-led CAMARA orchestration, or "
+                    "`mode=deterministic` for the same fused agent path without the LLM (fast sign-in / batch)."
                 ),
                 "security": [{"ApiKeyAuth": []}],
                 "parameters": [
@@ -82,8 +83,12 @@ SPEC = {
                                     },
                                     "mode": {
                                         "type": "string",
-                                        "enum": ["policy", "agent"],
-                                        "description": "policy = deterministic rules; agent = dynamic agent dispatch.",
+                                        "enum": ["policy", "agent", "deterministic"],
+                                        "description": (
+                                            "policy = tenant rules over collected signals; "
+                                            "agent = LLM-led tool use; "
+                                            "deterministic = intent-based agents + fused decision, no LLM."
+                                        ),
                                     },
                                     "context": {
                                         "type": "object",

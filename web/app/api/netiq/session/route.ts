@@ -16,6 +16,15 @@ export const dynamic = "force-dynamic";
 
 const E164 = /^\+[1-9]\d{6,14}$/;
 
+/** Demo phone sign-in: skip LLM (`agent`) for speed; override with NETIQ_DEMO_SIGNIN_MODE. */
+function signInDecisionMode(): "deterministic" | "agent" | "policy" {
+  const raw = (process.env.NETIQ_DEMO_SIGNIN_MODE || "deterministic")
+    .trim()
+    .toLowerCase();
+  if (raw === "agent" || raw === "policy") return raw;
+  return "deterministic";
+}
+
 export async function GET() {
   try {
     const session = await readSession();
@@ -87,7 +96,7 @@ export async function POST(request: Request) {
       intent,
       phone: phoneRaw,
       context,
-      mode: "agent",
+      mode: signInDecisionMode(),
     });
 
     if (decision.decision === "BLOCK" && !forceAllow) {

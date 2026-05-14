@@ -1,9 +1,10 @@
 /**
  * Shared types for the four demo sector apps.
  *
- * These types describe the contract between the demo UI and the
- * `/api/netiq/*` Next Route Handlers, which in turn proxy to the
- * Flask backend's `/decision/run` endpoint.
+ * By default the demo UI talks to Next Route Handlers under `/api/netiq/*`,
+ * which proxy to Flask with `NETIQ_DEMO_API_KEY` server-side. When
+ * `NEXT_PUBLIC_NETIQ_DEMO_DIRECT` is set, in-app actions can call Flask
+ * `/decision/run` directly from the browser (see `client.ts`).
  */
 
 export type DecisionValue =
@@ -14,7 +15,7 @@ export type DecisionValue =
   | "DEGRADE"
   | "OTP";
 
-export type DecisionMode = "agent" | "policy";
+export type DecisionMode = "agent" | "policy" | "deterministic";
 
 export type ContextPayload = {
   amount?: number;

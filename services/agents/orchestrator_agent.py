@@ -82,6 +82,22 @@ def _run_deterministic(context: Dict[str, Any], memory: Dict[str, Any]) -> Dict[
     return out
 
 
+def run_deterministic_pipeline(context: Dict[str, Any], memory: Dict[str, Any]) -> Dict[str, Any]:
+    """Same agents + DecisionAgent fusion as agent mode, without the LLM orchestration."""
+    out = _run_deterministic(context, memory)
+    inner = out.get("decision")
+    if isinstance(inner, dict):
+        out["decision"] = {
+            "decision": inner.get("decision"),
+            "confidence": inner.get("confidence"),
+            "risk_score": inner.get("risk_score"),
+            "reason": inner.get("reason"),
+            "memory_influence": inner.get("memory_influence"),
+            "reasoning_summary": inner.get("reasoning_summary"),
+        }
+    return out
+
+
 def run_agent_pipeline(context: Dict[str, Any], memory: Dict[str, Any]) -> Dict[str, Any]:
     """Runs the LLM-driven agent pipeline with deterministic fallback.
 

@@ -1,6 +1,6 @@
 """Unified decisioning endpoints for the agentic surface.
 
-- POST /decision/run  — accepts {mode: policy | agent, intent, phone, context}
+- POST /decision/run  — accepts {mode: policy | agent | deterministic, intent, phone, context}
 - POST /agent/run     — agent-only shortcut (same body, mode forced to agent)
 
 Both share the same auth, rate-limit, persistence and memory-update path so
@@ -18,7 +18,7 @@ from flask import Blueprint, Response, jsonify, request, stream_with_context
 
 from config import AppConfig
 from database.db import get_active_policy, insert_analyze_event
-from services.agents import run_agent_pipeline, run_policy_pipeline
+from services.agents import run_agent_pipeline, run_deterministic_pipeline, run_policy_pipeline
 from services.agents.llm_agent import run_llm_pipeline_stream
 from services.intent_mapper import CANONICAL_INTENTS, normalize_intent
 from services.memory_service import get_cross_sector_memory, write_back_memory
@@ -31,7 +31,7 @@ CONFIG = AppConfig()
 decision_bp = Blueprint("decision", __name__)
 agent_bp = Blueprint("agent_run", __name__)
 
-VALID_MODES = {"policy", "agent"}
+VALID_MODES = {"policy", "agent", "deterministic"}
 
 
 def _validate(payload: Dict[str, Any]) -> tuple[Optional[Dict[str, Any]], Optional[list[str]]]:
@@ -134,7 +134,12 @@ def _execute(payload: Dict[str, Any], mode: str, account_id: Optional[int], api_
         viz = result.get("visualization_payload") or {}
         policy_applied = result.get("policy_applied") or {}
     else:
-        result = run_agent_pipeline(context, memory)
+        if mode == "deterministic":
+            result = run_deterministic_pipeline(context, memory)
+            policy_applied = {"rule_id": None, "source": "deterministic_mode"}
+        else:
+            result = run_agent_pipeline(context, memory)
+            policy_applied = {"rule_id": None, "source": "agent_mode"}
         agent_outputs = result.get("agent_outputs") or {}
         d = result.get("decision") or {}
         decision = d.get("decision")
@@ -146,7 +151,6 @@ def _execute(payload: Dict[str, Any], mode: str, account_id: Optional[int], api_
         trace = result.get("trace") or []
         api_calls = result.get("api_calls") or []
         viz = result.get("visualization_payload") or {}
-        policy_applied = {"rule_id": None, "source": "agent_mode"}
     duration_ms = (time.perf_counter() - t0) * 1000.0
 
     aggregated_signals = _sanitize_signals(_aggregate_signals(agent_outputs))
@@ -515,8 +519,12 @@ def decision_stream():
     normalized = _normalize(parsed)
     if normalized["mode"] == "agent":
         gen = _stream_agent(normalized, account_id, api_key_id)
-    else:
+    elif normalized["mode"] == "policy":
         gen = _stream_policy(normalized, account_id, api_key_id)
+    else:
+        return jsonify(
+            {"errors": ["Streaming supports mode=agent or mode=policy only. Use POST /decision/run for deterministic mode."]}
+        ), 400
 
     return Response(
         stream_with_context(gen),
