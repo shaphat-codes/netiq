@@ -25,6 +25,28 @@ export const DEMO_SESSION_COOKIE = "netiq_demo_session";
 export const DEMO_FORCE_ALLOW_COOKIE = "netiq_demo_force_allow";
 const ONE_HOUR_SECONDS = 60 * 60;
 
+/** Cookie value for `DEMO_SESSION_COOKIE` (base64url JSON). */
+export function serializeDemoSessionCookie(session: DemoSession): string {
+  return Buffer.from(JSON.stringify(session), "utf8").toString("base64url");
+}
+
+/** Options for `NextResponse.cookies.set` / Route Handler session cookie. */
+export function demoSessionCookieOptions(): {
+  httpOnly: boolean;
+  sameSite: "lax";
+  path: string;
+  maxAge: number;
+  secure: boolean;
+} {
+  return {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: ONE_HOUR_SECONDS,
+    secure: process.env.NODE_ENV === "production",
+  };
+}
+
 function backendBase(): string {
   const raw =
     process.env.NETIQ_API_URL ||
@@ -107,7 +129,7 @@ export async function runDecision(
 }
 
 function encodeSession(s: DemoSession): string {
-  return Buffer.from(JSON.stringify(s), "utf8").toString("base64url");
+  return serializeDemoSessionCookie(s);
 }
 
 function decodeSession(raw: string): DemoSession | null {
@@ -130,28 +152,14 @@ export async function readSession(): Promise<DemoSession | null> {
 
 export async function writeSession(session: DemoSession): Promise<void> {
   const jar = await cookies();
-  jar.set({
-    name: DEMO_SESSION_COOKIE,
-    value: encodeSession(session),
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: ONE_HOUR_SECONDS,
-    secure: process.env.NODE_ENV === "production",
-  });
+  const opts = demoSessionCookieOptions();
+  jar.set(DEMO_SESSION_COOKIE, encodeSession(session), opts);
 }
 
 export async function clearSession(): Promise<void> {
   const jar = await cookies();
-  jar.set({
-    name: DEMO_SESSION_COOKIE,
-    value: "",
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-    secure: process.env.NODE_ENV === "production",
-  });
+  const opts = demoSessionCookieOptions();
+  jar.set(DEMO_SESSION_COOKIE, "", { ...opts, maxAge: 0 });
 }
 
 export async function isForceAllowEnabled(): Promise<boolean> {

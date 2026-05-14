@@ -11,12 +11,18 @@
  * directory (`web/.next/...`), mapping the absolute target into post-copy
  * layout, then `path.relative` from the NFT's new directory.
  *
- * Copy only on Vercel (VERCEL=1).
+ * Run only on Vercel builds (`VERCEL_ENV` is set on builds and `vercel dev`;
+ * `VERCEL=1|true` is a fallback).
  */
 const fs = require("fs");
 const path = require("path");
 
-if (process.env.VERCEL !== "1") {
+const shouldSyncWebNextToRoot =
+  Boolean(process.env.VERCEL_ENV) ||
+  process.env.VERCEL === "1" ||
+  process.env.VERCEL === "true";
+
+if (!shouldSyncWebNextToRoot) {
   process.exit(0);
 }
 

@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 
 import {
   BackendError,
-  clearSession,
+  DEMO_SESSION_COOKIE,
+  demoSessionCookieOptions,
   isForceAllowEnabled,
   readSession,
   runDecision,
-  writeSession,
+  serializeDemoSessionCookie,
 } from "@/lib/demo/session-server";
 import type { ContextPayload, DemoSession } from "@/lib/demo/types";
 
@@ -27,8 +28,12 @@ export async function GET() {
 }
 
 export async function DELETE() {
-  await clearSession();
-  return NextResponse.json({ ok: true });
+  const res = NextResponse.json({ ok: true });
+  res.cookies.set(DEMO_SESSION_COOKIE, "", {
+    ...demoSessionCookieOptions(),
+    maxAge: 0,
+  });
+  return res;
 }
 
 export async function POST(request: Request) {
@@ -107,8 +112,13 @@ export async function POST(request: Request) {
       sign_in_reason: effectiveDecision.reason || "",
       sign_in_confidence: effectiveDecision.confidence,
     };
-    await writeSession(session);
-    return NextResponse.json({ ok: true, session, decision: effectiveDecision });
+    const res = NextResponse.json({ ok: true, session, decision: effectiveDecision });
+    res.cookies.set(
+      DEMO_SESSION_COOKIE,
+      serializeDemoSessionCookie(session),
+      demoSessionCookieOptions(),
+    );
+    return res;
   } catch (err) {
     if (err instanceof BackendError) {
       return NextResponse.json(

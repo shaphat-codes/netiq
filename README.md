@@ -75,7 +75,9 @@ flowchart TB
 
 In production the UI often sits on **Vercel** and the API on **Render** (or similar). The browser calls Flask **directly** using `NEXT_PUBLIC_NETIQ_API_URL`. Next **Route Handlers** under `web/app/api/netiq/*` proxy some flows server-side (e.g. demos) using `NETIQ_DEMO_API_KEY` so secrets stay off the client.
 
-**Vercel:** Prefer **Root Directory = `web`** (simplest) or repo root with root `vercel.json` + `npm run build` (workspace build + `scripts/sync-vercel-next-output.js`). On Vercel we omit `outputFileTracingRoot` outside `web/` so serverless bundles include `.next` — otherwise `/api/*` routes can 500 with “no production build in `/var/task/.next`”.
+**Vercel:** **Root Directory = `web`** is the recommended setup. Vercel runs `next build` from `web/` (see `web/vercel.json`); output is `web/.next` at the deployment root, so you **do not** run `scripts/sync-vercel-next-output.js` and the repo-root `vercel.json` is not used for that app. Set **`NEXT_PUBLIC_NETIQ_API_URL`** (and **`NETIQ_DEMO_API_KEY`** if you use demo auth) on the **Vercel project** so server-side Route Handlers can reach Flask. If **`/api/*` returns a generic HTML 500** with root = `web`, the monorepo `.next` copy is not the cause—check **Vercel → Deployment → Functions → Logs** for that route’s stack trace.
+
+**Alternative:** Deploy from the **repo root** with root `vercel.json` **`buildCommand`: `npm run build`** (workspace build + `scripts/sync-vercel-next-output.js` when `VERCEL_ENV` is set or `VERCEL` is `1`/`true`). On Vercel, `web/next.config.ts` omits `outputFileTracingRoot` outside `web/` so serverless tracing stays valid.
 
 ---
 
@@ -92,7 +94,7 @@ In production the UI often sits on **Vercel** and the API on **Render** (or simi
 | `mcp_server.py` | Stdio MCP server for local IDE integration |
 | `web/` | Next.js UI — console, simulator, docs, sector demos |
 | `Dockerfile`, `Dockerfile.api`, `render.yaml` | Container / Render deployment |
-| `vercel.json`, `scripts/sync-vercel-next-output.js` | Monorepo Next deploy from repo root |
+| `vercel.json` (repo root), `web/vercel.json`, `scripts/sync-vercel-next-output.js` | Root deploy vs **`web`** as Vercel root (sync only for repo-root deploy) |
 
 ---
 
