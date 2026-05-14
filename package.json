@@ -2,7 +2,7 @@
   "name": "netiq",
   "private": true,
   "scripts": {
-    "build": "npm run build --prefix web && node scripts/sync-vercel-next-output.js",
+    "build": "npm run build --prefix web",
     "dev": "npm run dev --prefix web",
     "start": "npm run start --prefix web",
     "lint": "npm run lint --prefix web"

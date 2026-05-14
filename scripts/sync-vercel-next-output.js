@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 /**
- * When Vercel builds from the repo root, `next build` runs in `web/` and writes
- * `web/.next`. The Next.js preset expects `.next` at the project root.
+ * Legacy helper: copies `web/.next` → repo root `.next` and rewrites NFT paths.
  *
- * Copying `web/.next` → `.next` shifts every NFT file one segment shallower in
- * the repo, but paths *inside* the `.next` tree (e.g. `../package.json` from
- * `server/pages`) must stay valid — only targets that lived under `web/.next`
- * move to `repo/.next`, while `node_modules` at the repo root stay put.
- * We rewrite each `*.nft.json` "files" entry by resolving against the old
- * directory (`web/.next/...`), mapping the absolute target into post-copy
- * layout, then `path.relative` from the NFT's new directory.
+ * **Do not use** with the current layout (`npm ci --prefix web` / Root Directory =
+ * `web`): `.next` must stay next to `web/node_modules`. Copying only `.next` to
+ * the repo root while `node_modules` remains under `web/` breaks Vercel with
+ * ENOENT for `build-manifest.json` and MODULE_NOT_FOUND for `react/jsx-runtime`
+ * (launcher resolves under `/var/task/web/` but looks for `.next` under
+ * `/var/task/.next`).
  *
- * Run only on Vercel builds (`VERCEL_ENV` is set on builds and `vercel dev`;
- * `VERCEL=1|true` is a fallback).
+ * Kept only for unusual self-managed pipelines that hoist `node_modules` at the
+ * repo root to match a root-level `.next`.
  */
 const fs = require("fs");
 const path = require("path");

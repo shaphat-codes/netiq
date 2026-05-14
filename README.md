@@ -75,9 +75,9 @@ flowchart TB
 
 In production the UI often sits on **Vercel** and the API on **Render** (or similar). The browser calls Flask **directly** using `NEXT_PUBLIC_NETIQ_API_URL`. Next **Route Handlers** under `web/app/api/netiq/*` proxy some flows server-side (e.g. demos) using `NETIQ_DEMO_API_KEY` so secrets stay off the client.
 
-**Vercel:** **Root Directory = `web`** (recommended). Dependencies install under **`web/node_modules`** only, so Next’s output file traces never point at **`../../node_modules/...`** outside the deployed folder — that mismatch is what produced **“Could not find a production build in `/var/task/.next`”** from **`___next_launcher.cjs`** (static pages could still work; **`/api/*`** died). Root **`vercel.json`** is only for deploys whose project root is the **repo** (it uses **`npm ci --prefix web`**). Set **`NEXT_PUBLIC_NETIQ_API_URL`** and **`NETIQ_DEMO_API_KEY`** (if used) on the Vercel project.
+**Vercel:** Set the project **Root Directory to `web`** (not the repo root). The deployed app root must be **`/var/task`** = contents of `web/`, so **`.next`** and **`node_modules`** live in the same tree. If the project root is the **repository** (parent of `web/`), you get paths like **`/var/task/web/node_modules/...`** while the runtime looks for **`.next`** under **`/var/task/.next`** — copying only **`web/.next`** to the repo root (legacy sync) **without** hoisting **`node_modules`** causes **`ENOENT … /var/task/.next/build-manifest.json`** and **`Cannot find module 'react/jsx-runtime'`**. This repo’s root **`npm run build`** no longer runs that sync; use **`web/vercel.json`** defaults. Set **`NEXT_PUBLIC_NETIQ_API_URL`** and **`NETIQ_DEMO_API_KEY`** (if used) on the Vercel project.
 
-**Docker / repo-root:** `Dockerfile` builds Next from **`web/`** alone. Root **`npm run build`** runs **`npm run build --prefix web`** and `scripts/sync-vercel-next-output.js` when `VERCEL_ENV` or `VERCEL` is `1`/`true`.
+**Docker:** `Dockerfile` builds Next from **`web/`** alone. Root **`npm run build`** is **`npm run build --prefix web`** only.
 
 ---
 
@@ -94,7 +94,7 @@ In production the UI often sits on **Vercel** and the API on **Render** (or simi
 | `mcp_server.py` | Stdio MCP server for local IDE integration |
 | `web/` | Next.js UI — console, simulator, docs, sector demos |
 | `Dockerfile`, `Dockerfile.api`, `render.yaml` | Container / Render deployment |
-| `vercel.json` (repo root), `web/vercel.json`, `scripts/sync-vercel-next-output.js` | Root deploy vs **`web`** as Vercel root (sync only for repo-root deploy) |
+| `web/vercel.json`, `scripts/sync-vercel-next-output.js` (optional legacy) | Vercel: **Root Directory = `web`**; do not split `.next` and `node_modules` across `/var/task` vs `/var/task/web` |
 
 ---
 
