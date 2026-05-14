@@ -75,6 +75,8 @@ flowchart TB
 
 In production the UI often sits on **Vercel** and the API on **Render** (or similar). The browser calls Flask **directly** using `NEXT_PUBLIC_NETIQ_API_URL`. Next **Route Handlers** under `web/app/api/netiq/*` proxy some flows server-side (e.g. demos) using `NETIQ_DEMO_API_KEY` so secrets stay off the client.
 
+**Vercel:** Prefer **Root Directory = `web`** (simplest) or repo root with root `vercel.json` + `npm run build` (workspace build + `scripts/sync-vercel-next-output.js`). On Vercel we omit `outputFileTracingRoot` outside `web/` so serverless bundles include `.next` — otherwise `/api/*` routes can 500 with “no production build in `/var/task/.next`”.
+
 ---
 
 ## Repository layout
